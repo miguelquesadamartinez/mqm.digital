@@ -1,0 +1,52 @@
+name: Deploy Static Website to S3 + CloudFront
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync files to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: mqm.digital
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-2 # Cambia si tu bucket está en otra región
+          SOURCE_DIR: "./" # Raíz de tu proyecto
+
+      - name: Invalidate CloudFront cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          PATHS: "/*"
+          AWS_REGION: us-east-2
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Deploy completado: mqm.digital"
+          to: "miguel.quesada.martinez.1975@gmail.com"
+          from: "GitHub Actions <no-reply@github.com>"
+          body: |
+            El proceso de despliegue de tu web mqm.digital ha finalizado.
+
+            • Resultado del job: ${{ job.status }}
+            • Commit: ${{ github.sha }}
+            • Ejecutado por: ${{ github.actor }}
+
+            Si hubo errores, revisa: https://github.com/${{ github.repository }}/actions
