@@ -47,7 +47,7 @@ const translations = {
       languages: "Idiomas",
     },
     loading: "Cargando currículum…",
-    footer: "© 2026 Miguel Quesada Martinez",
+    footer: "© 2025 Miguel Quesada Martinez",
     meta: {
       title_home:
         "Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend",
@@ -84,7 +84,7 @@ const translations = {
       languages: "Languages",
     },
     loading: "Loading resume…",
-    footer: "© 2026 Miguel Quesada Martinez",
+    footer: "© 2025 Miguel Quesada Martinez",
     meta: {
       title_home:
         "Miguel Quesada Martinez — Software Engineer / Backend - Frontend",
@@ -121,7 +121,7 @@ const translations = {
       languages: "Idiomas",
     },
     loading: "Carregando currículo…",
-    footer: "© 2026 Miguel Quesada Martinez",
+    footer: "© 2025 Miguel Quesada Martinez",
     meta: {
       title_home:
         "Miguel Quesada Martínez — Engenheiro de Software / Backend - Frontend",
