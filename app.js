@@ -1,0 +1,694 @@
+// Hamburguesa: lógica para abrir/cerrar menú en móvil con overlay
+document.addEventListener("DOMContentLoaded", () => {
+  const menuBtn = document.querySelector(".menu-toggle");
+  const nav = document.getElementById("main-nav");
+  const overlay = document.querySelector(".menu-overlay");
+  function closeMenu() {
+    nav && nav.classList.remove("open");
+    overlay && overlay.classList.remove("open");
+    menuBtn && menuBtn.setAttribute("aria-expanded", "false");
+  }
+  if (menuBtn && nav && overlay) {
+    menuBtn.addEventListener("click", () => {
+      const open = nav.classList.toggle("open");
+      overlay.classList.toggle("open", open);
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    overlay.addEventListener("click", closeMenu);
+    // Cierra el menú al hacer click en un link
+    nav.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", closeMenu);
+    });
+  }
+});
+/* app.js - SPA simple que carga data.json y renderiza secciones. Actualizada UI: chips para skills, tecnologías en experiencia e idiomas en contacto. */
+
+let data = null;
+const app = document.getElementById("app");
+const loading = document.getElementById("loading");
+// i18n
+const translations = {
+  es: {
+    nav: {
+      about: "Carta de presentación",
+      cover: "Carta de presentación",
+      experience: "Experiencia",
+      education: "Educación",
+      skills: "Habilidades",
+      contact: "Contacto",
+    },
+    section: {
+      about: "Acerca",
+      cover: "Carta de presentación",
+      experience: "Experiencia",
+      education: "Educación",
+      skills: "Habilidades",
+      contact: "Contacto",
+      languages: "Idiomas",
+    },
+    loading: "Cargando currículum…",
+    footer: "© 2026 Miguel Quesada Martinez",
+    meta: {
+      title_home:
+        "Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend",
+      desc_home:
+        "Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia en desarrollo, administración de bases de datos y liderazgo técnico. Basado en Barcelona.",
+      title_cover: "Carta de presentación — Miguel Quesada Martínez",
+      desc_cover:
+        "Con más de 25 años de experiencia en desarrollo de software y gestión de TI. Senior Laravel Developer con trayectoria en España y Brasil.",
+    },
+    contactButton: "Contactar",
+    location: "Ubicación",
+    email: "Email",
+    phone: "Teléfono",
+    website: "Web",
+    databases: "Bases de datos",
+    version_control: "Control de versiones",
+  },
+  en: {
+    nav: {
+      about: "Cover Letter",
+      cover: "Cover Letter",
+      experience: "Experience",
+      education: "Education",
+      skills: "Skills",
+      contact: "Contact",
+    },
+    section: {
+      about: "About",
+      cover: "Cover Letter",
+      experience: "Experience",
+      education: "Education",
+      skills: "Skills",
+      contact: "Contact",
+      languages: "Languages",
+    },
+    loading: "Loading resume…",
+    footer: "© 2026 Miguel Quesada Martinez",
+    meta: {
+      title_home:
+        "Miguel Quesada Martinez — Software Engineer / Backend - Frontend",
+      desc_home:
+        "Resume of Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ years experience in software development, DB administration and technical leadership. Based in Barcelona.",
+      title_cover: "Cover Letter — Miguel Quesada Martínez",
+      desc_cover:
+        "Senior Laravel Developer with over 25 years of experience in software development and systems leadership. Experience in Spain and Brazil.",
+    },
+    contactButton: "Contact",
+    location: "Location",
+    email: "Email",
+    phone: "Phone",
+    website: "Website",
+    databases: "Databases",
+    version_control: "Version control",
+  },
+  pt: {
+    nav: {
+      cover: "Carta de apresentação",
+      about: "Carta de apresentação",
+      experience: "Experiência",
+      education: "Educação",
+      skills: "Competências",
+      contact: "Contato",
+    },
+    section: {
+      cover: "Carta de apresentação",
+      about: "Sobre",
+      experience: "Experiência",
+      education: "Educação",
+      skills: "Competências",
+      contact: "Contato",
+      languages: "Idiomas",
+    },
+    loading: "Carregando currículo…",
+    footer: "© 2026 Miguel Quesada Martinez",
+    meta: {
+      title_home:
+        "Miguel Quesada Martínez — Engenheiro de Software / Backend - Frontend",
+      desc_home:
+        "Currículo de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ anos de experiência em desenvolvimento, administração de BD e liderança técnica. Baseado em Barcelona.",
+      title_cover: "Carta de apresentação — Miguel Quesada Martínez",
+      desc_cover:
+        "Com mais de 25 anos de experiência em desenvolvimento de software e liderança de sistemas. Senior Laravel Developer com experiência em Espanha e Brasil.",
+    },
+    contactButton: "Contactar",
+    location: "Localização",
+    email: "Email",
+    phone: "Telefone",
+    website: "Site",
+    databases: "Bancos de dados",
+    version_control: "Controle de versão",
+  },
+};
+
+let currentLang =
+  localStorage.getItem("lang") ||
+  (navigator.language && navigator.language.startsWith("en")
+    ? "en"
+    : navigator.language && navigator.language.startsWith("pt")
+    ? "pt"
+    : "es");
+
+// detect language from path or from a server-provided initializer (window.INIT_LANG)
+(function detectInitialLang() {
+  const supported = ["es", "en", "pt"];
+  const pathSeg = (location.pathname.split("/")[1] || "").toLowerCase();
+  if (window.INIT_LANG && supported.includes(window.INIT_LANG)) {
+    currentLang = window.INIT_LANG;
+  } else if (supported.includes(pathSeg)) {
+    currentLang = pathSeg;
+  }
+})();
+
+function t(key) {
+  if (!key) return "";
+  const parts = key.split(".");
+  let obj = translations[currentLang] || translations.es;
+  for (const p of parts) {
+    if (obj && Object.prototype.hasOwnProperty.call(obj, p)) obj = obj[p];
+    else return key;
+  }
+  return obj;
+}
+
+function setLang(lang) {
+  if (!translations[lang]) lang = "es";
+  currentLang = lang;
+  localStorage.setItem("lang", lang);
+  // update nav and any data-i18n elements
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.dataset.i18n;
+    el.textContent = t(key);
+  });
+  // update loading and footer
+  const ld = document.getElementById("loading");
+  if (ld) ld.textContent = t("loading");
+  const footer = document.querySelector(".site-footer .container");
+  if (footer) footer.textContent = t("footer");
+  // mark active button
+  document
+    .querySelectorAll(".lang-btn")
+    .forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
+  // re-render current route so section titles update
+  renderRoute();
+  // update document title and meta description / og tags based on current route
+  updateMetaForRoute();
+}
+
+function updateMetaForRoute() {
+  const hash = location.hash.replace("#", "") || "about";
+  const metaInfo = translations[currentLang] && translations[currentLang].meta;
+  let title = metaInfo && metaInfo.title_home;
+  let desc = metaInfo && metaInfo.desc_home;
+  if (hash === "cover") {
+    title = (metaInfo && metaInfo.title_cover) || title;
+    desc = (metaInfo && metaInfo.desc_cover) || desc;
+  }
+  if (title) document.title = title;
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute("content", desc || "");
+  // OG / Twitter updates
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  const twDesc = document.querySelector('meta[name="twitter:description"]');
+  if (ogTitle) ogTitle.setAttribute("content", title || "");
+  if (ogDesc) ogDesc.setAttribute("content", desc || "");
+  if (twTitle) twTitle.setAttribute("content", title || "");
+  if (twDesc) twDesc.setAttribute("content", desc || "");
+
+  // Update canonical and hreflang alternate links to use language-specific paths
+  try {
+    const origin = location.origin.replace(/\/$/, "");
+    const basePaths = { es: "/es/", en: "/en/", pt: "/pt/" };
+    // canonical
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+    const basePath = basePaths[currentLang] || "/es/";
+    canonical.setAttribute("href", origin + basePath);
+
+    // alternates
+    ["es", "en", "pt"].forEach((lg) => {
+      let el = document.querySelector(
+        'link[rel="alternate"][hreflang="' + lg + '"]'
+      );
+      if (!el) {
+        el = document.createElement("link");
+        el.rel = "alternate";
+        el.setAttribute("hreflang", lg);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("href", origin + basePaths[lg]);
+    });
+  } catch (e) {
+    console.warn("Could not update canonical/hreflang dynamically", e);
+  }
+}
+
+// helpers to read localized data from data.json (falls back to original fields)
+function L(key) {
+  if (!data) return "";
+  const root = data.i18n && data.i18n[currentLang];
+  return root &&
+    Object.prototype.hasOwnProperty.call(root, key) &&
+    root[key] !== undefined
+    ? root[key]
+    : data[key];
+}
+
+function localizedEntry(baseArrayName, index) {
+  if (!data || !data.i18n) return null;
+  const root = data.i18n[currentLang];
+  if (root && root[baseArrayName] && root[baseArrayName][index])
+    return root[baseArrayName][index];
+  return null;
+}
+
+async function loadData() {
+  try {
+    const res = await fetch("data.json?version=1.6");
+    data = await res.json();
+    loading && loading.remove();
+    // insert/update JSON-LD Person schema using loaded data
+    try {
+      const ld = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: L("name") || data.name,
+        jobTitle: L("title") || data.title,
+        url: "https://mqm.dev/",
+        image: "/favicon.svg",
+        email: data.contact && data.contact.email,
+        telephone: data.contact && data.contact.phone,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: data.contact && data.contact.location,
+        },
+      };
+      // remove existing JSON-LD if present
+      const existing = document.querySelector(
+        'script[type="application/ld+json"][data-generated="true"]'
+      );
+      if (existing) existing.remove();
+      const s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.setAttribute("data-generated", "true");
+      s.text = JSON.stringify(ld, null, 2);
+      document.head.appendChild(s);
+    } catch (e) {
+      console.warn("Could not insert JSON-LD", e);
+    }
+    renderRoute();
+  } catch (e) {
+    console.error("Error cargando data.json", e);
+    const msg = String(e && e.message ? e.message : e);
+    app.innerHTML = `
+      <div class="card">
+        <strong>Error cargando currículum.</strong>
+        <div style="margin-top:8px">Asegúrate de que <code>data.json</code> está disponible en <code>/data.json</code>.</div>
+        <div style="margin-top:8px;color:var(--muted);font-size:0.9rem">Detalle: ${escapeHtml(
+          msg
+        )}</div>
+        <div style="margin-top:8px">Si ves un error CORS (Access-Control-Allow-Origin), sirve los archivos desde el mismo origen o configura el servidor para permitir CORS.</div>
+      </div>`;
+  }
+}
+
+function renderRoute() {
+  const hash = location.hash.replace("#", "") || "about";
+  switch (hash) {
+    case "cover":
+      // cover now unified into About
+      renderAbout();
+      break;
+    case "experience":
+      renderExperience();
+      break;
+    case "education":
+      renderEducation();
+      break;
+    case "skills":
+      renderSkills();
+      break;
+    case "contact":
+      renderContact();
+      break;
+    default:
+      renderAbout();
+  }
+}
+
+function renderHeader() {
+  return `
+    <section class="card header" aria-labelledby="profile-name">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div class="avatar">
+          <img src="MiguelQuesada.PNG" alt="${escapeHtml(
+            L("name") || data.name
+          )}" />
+        </div>
+        <div>
+          <div id="profile-name" class="h-name">${escapeHtml(
+            L("name") || data.name
+          )}</div>
+          <div class="h-title">${escapeHtml(L("title") || data.title)}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderAbout() {
+  app.innerHTML = `
+    ${renderHeader()}
+    <section class="card" id="about-section">
+      <h2 class="section-title">${t("section.cover")}</h2>
+        <p>${renderInlineBold(L("summary") || data.summary)}</p>
+        ${(() => {
+          const text = L("cover_letter") || data.cover_letter || "";
+          const paragraphs = String(text)
+            .split(/\n\s*\n/)
+            .map((p) => p.trim())
+            .filter(Boolean);
+          return paragraphs.length
+            ? paragraphs.map((p) => `<p>${renderInlineBold(p)}</p>`).join("")
+            : "";
+        })()}
+      <div class="social-links">
+        <a class="social" href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M12 0.5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.77 8.205 11.36.6.11.82-.26.82-.58 0-.29-.01-1.04-.016-2.04-3.338.73-4.042-1.61-4.042-1.61-.546-1.39-1.333-1.76-1.333-1.76-1.09-.75.083-.74.083-.74 1.205.085 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.487.99.108-.78.418-1.3.76-1.6-2.665-.3-5.466-1.33-5.466-5.92 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 0 1 3.003-.404c1.02.005 2.045.138 3.003.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.6-2.804 5.615-5.476 5.91.43.37.823 1.1.823 2.22 0 1.6-.015 2.88-.015 3.27 0 .32.216.694.825.576C20.565 22.27 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+        </a>
+        <a class="social" href="https://www.linkedin.com/in/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zM8.5 8h3.84v2.2h.05c.54-1.02 1.87-2.1 3.85-2.1 4.12 0 4.88 2.71 4.88 6.24V24h-4v-7.44c0-1.78-.03-4.07-2.48-4.07-2.48 0-2.86 1.94-2.86 3.95V24h-4V8z"/></svg>
+        </a>
+      </div>
+      <p class="meta about-contact">${t("location")}: ${escapeHtml(
+    (data.i18n &&
+      data.i18n[currentLang] &&
+      data.i18n[currentLang].contact &&
+      data.i18n[currentLang].contact.location) ||
+      data.contact.location
+  )} <span class="sep">·</span> <a class="btn" href="mailto:${
+    data.contact.email
+  }">${t("contactButton")}</a></p>
+      ${
+        {
+          es: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.es &&
+          data.i18n.es.languages
+            ? data.i18n.es.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+          en: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Languages</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.en &&
+          data.i18n.en.languages
+            ? data.i18n.en.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+          pt: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.pt &&
+          data.i18n.pt.languages
+            ? data.i18n.pt.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+        }[currentLang]
+      }
+      ${renderCVDownloadBtn()}
+    </section>
+  `;
+}
+
+function renderCVDownloadBtn() {
+  const btns = {
+    es: `<a class='cv-download-btn' href='cvs/Curriculum Miguel Quesada.pdf' download>Descargar CV (PDF)</a>`,
+    en: `<a class='cv-download-btn' href='cvs/Resume Miguel Quesada.pdf' download>Download Resume (PDF)</a>`,
+    pt: `<a class='cv-download-btn' href='cvs/CV Miguel Quesada.pdf' download>Baixar CV (PDF)</a>`,
+  };
+  return btns[currentLang] || btns.es;
+}
+
+// Insert CV download button at the end of all other main sections
+function patchSectionWithCV(html) {
+  return html + renderCVDownloadBtn();
+}
+
+function renderExperience() {
+  app.innerHTML = patchSectionWithCV(`
+    ${renderHeader()}
+    <section class="card" aria-labelledby="exp-title">
+      <h2 id="exp-title" class="section-title">${t("section.experience")}</h2>
+      <ul class="list">
+        ${data.experience
+          .map((exp, i) => {
+            const lexp = localizedEntry("experience", i) || {};
+            const role = lexp.role || exp.role;
+            const company = lexp.company || exp.company;
+            const period = exp.period;
+            const desc = lexp.desc || exp.desc;
+            const highlights = lexp.highlights || exp.highlights;
+            const technologies = exp.technologies || [];
+            const databases = exp.databases || [];
+            const version_control = exp.version_control || "";
+            return `
+          <li>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <div><strong>${escapeHtml(role)}</strong> — ${escapeHtml(
+              company
+            )}</div>
+              <div class="meta">${escapeHtml(period)}</div>
+            </div>
+            <div class="meta">${escapeHtml(desc)}</div>
+            ${
+              highlights
+                ? '<div class="meta">' +
+                  highlights.map((h) => `• ${escapeHtml(h)}`).join("<br/>") +
+                  "</div>"
+                : ""
+            }
+            ${
+              technologies && technologies.length
+                ? '<div class="exp-tech">' +
+                  technologies
+                    .map((t) => `<span class="chip">${escapeHtml(t)}</span>`)
+                    .join(" ") +
+                  "</div>"
+                : ""
+            }
+            ${
+              databases && databases.length
+                ? `<div class="exp-meta">${t("databases")}: ` +
+                  databases.map((d) => escapeHtml(d)).join(", ") +
+                  "</div>"
+                : ""
+            }
+            ${
+              version_control
+                ? `<div class="exp-meta">${t("version_control")}: ` +
+                  escapeHtml(version_control) +
+                  "</div>"
+                : ""
+            }
+          </li>`;
+          })
+          .join("")}
+      </ul>
+    </section>
+  `);
+}
+
+function renderEducation() {
+  app.innerHTML = patchSectionWithCV(`
+    ${renderHeader()}
+    <section class="card">
+      <h2 class="section-title">${t("section.education")}</h2>
+      <ul class="list">
+        ${data.education
+          .map((ed, i) => {
+            const led = localizedEntry("education", i) || {};
+            const degree = led.degree || ed.degree;
+            const school = led.school || ed.school;
+            const period = ed.period;
+            return `<li><strong>${escapeHtml(
+              degree
+            )}</strong><div class="meta">${escapeHtml(school)} — ${escapeHtml(
+              period
+            )}</div></li>`;
+          })
+          .join("")}
+      </ul>
+    </section>
+  `);
+}
+
+function renderSkills() {
+  app.innerHTML = patchSectionWithCV(`
+    ${renderHeader()}
+    <section class="card">
+      <h2 class="section-title">${t("section.skills")}</h2>
+      <div class="chips">${(data.i18n &&
+      data.i18n[currentLang] &&
+      data.i18n[currentLang].skills
+        ? data.i18n[currentLang].skills
+        : data.skills
+      )
+        .map((s) => `<span class="chip">${escapeHtml(s)}</span>`)
+        .join("")}</div>
+    </section>
+  `);
+}
+
+function renderContact() {
+  app.innerHTML = patchSectionWithCV(`
+    ${renderHeader()}
+    <section class="card">
+      <h2 class="section-title">${t("section.contact")}</h2>
+      <p class="meta">${t("email")}: <a href="mailto:${
+    data.contact.email
+  }">${escapeHtml(data.contact.email)}</a></p>
+      <p class="meta">${t("phone")}: ${escapeHtml(data.contact.phone)}</p>
+      <p class="meta">${t("website")}: <a href="${
+    (data.i18n &&
+      data.i18n[currentLang] &&
+      data.i18n[currentLang].contact &&
+      data.i18n[currentLang].contact.website) ||
+    data.contact.website
+  }" target="_blank" rel="noopener">${escapeHtml(
+    (data.i18n &&
+      data.i18n[currentLang] &&
+      data.i18n[currentLang].contact &&
+      data.i18n[currentLang].contact.website) ||
+      data.contact.website
+  )}</a></p>
+    </section>
+  `);
+}
+
+function renderCoverLetter() {
+  const text = L("cover_letter") || data.cover_letter || "";
+  // split into paragraphs by double newlines
+  const paragraphs = String(text)
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  app.innerHTML = `
+    ${renderHeader()}
+    <section class="card">
+      <h2 class="section-title">${t("section.cover")}</h2>
+      ${paragraphs.map((p) => `<p>${renderInlineBold(p)}</p>`).join("")}
+    </section>
+  `;
+}
+
+function initials(name) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+function escapeHtml(s) {
+  if (!s) return "";
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[c];
+  });
+}
+
+// Render inline bold markers written as **bold text** safely.
+function renderInlineBold(input) {
+  if (input === null || input === undefined) return "";
+  const s = String(input);
+  let out = "";
+  let i = 0;
+  while (i < s.length) {
+    const start = s.indexOf("**", i);
+    if (start === -1) {
+      out += escapeHtml(s.slice(i));
+      break;
+    }
+    // append text before **
+    out += escapeHtml(s.slice(i, start));
+    const end = s.indexOf("**", start + 2);
+    if (end === -1) {
+      // no closing marker; treat rest as literal
+      out += escapeHtml(s.slice(start));
+      break;
+    }
+    const boldText = s.slice(start + 2, end);
+    out += "<strong>" + escapeHtml(boldText) + "</strong>";
+    i = end + 2;
+  }
+  return out;
+}
+
+window.addEventListener("hashchange", renderRoute);
+window.addEventListener("load", loadData);
+
+// initialize i18n UI once DOM is ready: attach language button handlers and set initial language
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".lang-btn").forEach((b) => {
+    b.addEventListener("click", () => setLang(b.dataset.lang));
+  });
+  // set initial language (this will update nav text and footer)
+  setLang(currentLang);
+});
+
+// Fix layout: move social links + contact line below cover text and above languages
+function normalizeAboutLayout() {
+  try {
+    const aboutSection = document.querySelector("#about-section");
+    if (!aboutSection) return;
+
+    const socialLinks = aboutSection.querySelector(".social-links");
+    const aboutContact = aboutSection.querySelector(".about-contact");
+    const languagesSection = aboutSection.querySelector(".languages");
+    const languagesTitle = aboutSection.querySelector(".section-title[style]");
+
+    if (socialLinks && aboutContact && languagesSection && languagesTitle) {
+      // Move social links and contact below the cover text
+      aboutSection.appendChild(socialLinks);
+      aboutSection.appendChild(aboutContact);
+
+      // Ensure languages title and section remain at the bottom
+      aboutSection.appendChild(languagesTitle);
+      aboutSection.appendChild(languagesSection);
+    }
+  } catch (e) {
+    console.warn("normalizeAboutLayout error:", e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", normalizeAboutLayout);
+window.addEventListener("hashchange", normalizeAboutLayout);

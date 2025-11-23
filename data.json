@@ -1,0 +1,315 @@
+{
+  "name": "Miguel Quesada Martínez",
+  "title": "Ingeniero de Software / Backend - Frontend",
+  "summary": "",
+  "contact": {
+    "email": "miguel.quesada.martinez.1975@gmail.com",
+    "phone": "+34 677 252 313",
+    "location": "Barcelona, España",
+    "website": "https://mqm.dev"
+  },
+  "experience": [
+    {
+      "role": "Senior Fullstack Developer",
+      "company": "Biogyne Spain",
+      "period": "02/2023 - 10/2025",
+      "desc": "Desarrollo integral de sistemas web, entre ellos un e-commerce para teleoperadoras con gestión y automatización de procesos internos para productos, condiciones comerciales y clientes.",
+      "highlights": [
+        "E-commerce para teleoperadoras",
+        "Gestión y automatización de procesos internos"
+      ],
+      "technologies": ["PHP", "Laravel", "Vue.js", "Bootstrap", "Node.js"],
+      "databases": ["SQL Server", "MariaDB"],
+      "version_control": "GIT"
+    },
+    {
+      "role": "CTO y Senior Developer",
+      "company": "Denusa (Destilaria Nova União S/A - Brasil)",
+      "period": "07/2013 - 12/2021",
+      "desc": "Gestión del departamento de TI y liderazgo técnico de proyectos corporativos. Desarrollo de aplicaciones web y administración de infraestructura Linux/Windows. Mantenimiento del ERP TOTVS.",
+      "highlights": [
+        "Gestión y liderazgo del departamento de TI",
+        "Mantenimiento del ERP TOTVS"
+      ],
+      "technologies": [
+        "PHP",
+        "C#",
+        "Laravel",
+        "Zend Framework",
+        "Bootstrap",
+        "Vue.js"
+      ],
+      "databases": ["MySQL", "SQL Server"],
+      "version_control": "GIT"
+    },
+    {
+      "role": "Senior Developer",
+      "company": "Segundamano.es",
+      "period": "01/2009 - 04/2013",
+      "desc": "Responsable del departamento de desarrollo backend/fraude; programación y resolución de bugs.",
+      "highlights": ["Responsable de backend y fraude"],
+      "technologies": ["PHP", "C", "C++", "Perl", "Bash", "JavaScript", "C#"],
+      "databases": ["PostgreSQL", "Oracle", "SQL Server", "MySQL"],
+      "version_control": "SVN"
+    },
+    {
+      "role": "Responsable de TI",
+      "company": "Plastificados de Terrassa",
+      "period": "07/2006 - 12/2008",
+      "desc": "Dirección del área informática e implementación de soluciones de gestión interna y migración de sistemas.",
+      "technologies": ["PHP", "C#"],
+      "databases": ["MySQL", "SQL Server", "Oracle", "Access"]
+    },
+    {
+      "role": "Empresa Familiar / Desarrollador",
+      "company": "NELOSA",
+      "period": "03/1993 - 12/2006",
+      "desc": "Desarrollo de sistemas de gestión y comercio electrónico; mantenimiento de servidores y bases de datos; creación de un e-commerce desde cero.",
+      "technologies": ["PHP", "Visual Basic"],
+      "databases": ["MySQL", "Access"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Grado en Ingeniería Informática",
+      "school": "Cibernos",
+      "period": "1999 - 2002"
+    }
+  ],
+  "skills": [
+    "PHP",
+    "C#",
+    "C",
+    "C++",
+    "Python",
+    "Node.js",
+    "Bash",
+    "Perl",
+    "JavaScript",
+    "Laravel",
+    "Vue.js",
+    "Bootstrap",
+    "SQL Server",
+    "MySQL",
+    "PostgreSQL",
+    "Git",
+    "SVN",
+    "Linux",
+    "Windows Server",
+    "Trabajo en equipo",
+    "Habilidad para aprender",
+    "Puntualidad y responsabilidad",
+    "Compromiso",
+    "Empatía",
+    "Flexibilidad y adaptabilidad",
+    "Comunicación",
+    "Resolución de problemas",
+    "Persona proactiva",
+    "Capacidad de trabajo",
+    "Motivación",
+    "Liderazgo",
+    "Creatividad",
+    "Habilidades sociales",
+    "Capacidad de razonamiento",
+    "Atención al detalle"
+  ],
+  "languages": [
+    { "name": "Español", "level": "Nativo" },
+    { "name": "Catalán", "level": "Nativo" },
+    { "name": "Inglés", "level": "Fluido" },
+    { "name": "Portugués", "level": "Fluido" }
+  ],
+  "cover_letter": "**Soy un desarrollador FullStack sénior con más de 25 años de experiencia, apasionado por la tecnología y por trabajar con las personas.**\n\nMi trayectoria incluye también la dirección técnica y el liderazgo de proyectos en España y Brasil, lo que me ha dado una visión amplia, madura y adaptable del mundo del software.\n\n**Destaco por mi forma de trabajar**: resuelvo problemas complejos con calma, especialmente en situaciones críticas, y mantengo siempre un enfoque en la arquitectura limpia, la eficiencia del código y el rendimiento. Me integro con facilidad en los equipos, colaboro, escucho, ayudo y mantengo una actitud positiva incluso en los momentos difíciles.\n\nAdemás de mis habilidades técnicas, aporto una dimensión humana que valoro tanto como el código: responsabilidad, empatía, buena comunicación y capacidad para generar confianza y buen ambiente. Hablo español, catalán, inglés y portugués con fluidez, lo que me permite colaborar de manera natural en entornos multiculturales.\n\n**En resumen: soy un profesional sénior con valores, trato humano y un enfoque colaborativo, alguien con experiencia real y con quien resulta fácil y agradable trabajar.**",
+  "i18n": {
+    "en": {
+      "name": "Miguel Quesada Martínez",
+      "title": "Software Engineer / Backend - Frontend",
+      "summary": "",
+      "contact": {
+        "location": "Barcelona, Spain",
+        "website": "https://mqm.dev"
+      },
+      "experience": [
+        {
+          "role": "Senior Fullstack Developer",
+          "company": "Biogyne Spain",
+          "desc": "Full development of web systems, including an e-commerce for telecom operators with management and automation of internal processes for products, commercial conditions and customers.",
+          "highlights": [
+            "E-commerce for telecom operators",
+            "Management and automation of internal processes"
+          ]
+        },
+        {
+          "role": "CTO and Senior Developer",
+          "company": "Denusa (Destilaria Nova União S/A - Brazil)",
+          "desc": "Managed the IT department and provided technical leadership for corporate projects. Developed web applications and administered Linux/Windows infrastructure. Maintained the TOTVS ERP.",
+          "highlights": [
+            "IT department management and leadership",
+            "Maintenance of TOTVS ERP"
+          ]
+        },
+        {
+          "role": "Senior Developer",
+          "company": "Segundamano.es",
+          "desc": "Responsible for the backend/fraud development team; programming and bug fixing.",
+          "highlights": ["Responsible for backend and fraud"]
+        },
+        {
+          "role": "Head of IT",
+          "company": "Plastificados de Terrassa",
+          "desc": "Led the IT area and implemented internal management solutions and system migrations."
+        },
+        {
+          "role": "Family Business / Developer",
+          "company": "NELOSA",
+          "desc": "Developed management systems and e-commerce; maintained servers and databases; built an e-commerce from scratch."
+        }
+      ],
+      "education": [
+        {
+          "degree": "Bachelor's Degree in Computer Engineering",
+          "school": "Cibernos"
+        }
+      ],
+      "skills": [
+        "PHP",
+        "C#",
+        "C",
+        "C++",
+        "Python",
+        "Node.js",
+        "Bash",
+        "Perl",
+        "JavaScript",
+        "Laravel",
+        "Vue.js",
+        "Bootstrap",
+        "SQL Server",
+        "MySQL",
+        "PostgreSQL",
+        "Git",
+        "SVN",
+        "Linux",
+        "Windows Server",
+        "Teamwork",
+        "Quick learner",
+        "Punctuality and responsibility",
+        "Commitment",
+        "Empathy",
+        "Flexibility and adaptability",
+        "Communication",
+        "Problem solving",
+        "Proactive",
+        "Work capacity",
+        "Motivation",
+        "Leadership",
+        "Creativity",
+        "Social skills",
+        "Reasoning ability",
+        "Attention to detail"
+      ],
+      "languages": [
+        { "name": "Spanish", "level": "Native" },
+        { "name": "Catalan", "level": "Native" },
+        { "name": "English", "level": "Fluent" },
+        { "name": "Portuguese", "level": "Fluent" }
+      ],
+      "cover_letter": "**I am a senior FullStack developer with over 25 years of experience, passionate about technology and working with people.** Throughout my career I have developed solutions in multiple languages and environments (PHP, C#, JavaScript), managed databases such as SQL Server, MySQL and PostgreSQL, and administered Linux and Windows servers.\n\nMy career also includes technical management and project leadership in Spain and Brazil, which has given me a broad, mature and adaptable view of the software world.\n\n**I stand out for my way of working:** I solve complex problems calmly, especially in critical situations, and I always keep a focus on clean architecture, code efficiency and performance. I integrate easily into teams, collaborate, listen, help and maintain a positive attitude even in difficult moments.\n\nIn addition to my technical skills, I bring a human dimension that I value as much as code: responsibility, empathy, good communication and the ability to build trust and a good environment. I speak Spanish, Catalan, English and Portuguese fluently, which allows me to collaborate naturally in multicultural settings.\n\n**In short: I am a senior professional with values, a human approach and a collaborative mindset, someone with real experience and who is easy and pleasant to work with.**"
+    },
+    "pt": {
+      "name": "Miguel Quesada Martínez",
+      "title": "Engenheiro de Software / Backend - Frontend",
+      "summary": "",
+      "contact": {
+        "location": "Barcelona, Espanha",
+        "website": "https://mqm.dev"
+      },
+      "experience": [
+        {
+          "role": "Senior Fullstack Developer",
+          "company": "Biogyne Spain",
+          "desc": "Desenvolvimento integral de sistemas web, incluindo um e‑commerce para operadoras de telecom com gestão e automação de processos internos para produtos, condições comerciais e clientes.",
+          "highlights": [
+            "E‑commerce para operadoras de telecom",
+            "Gestão e automação de processos internos"
+          ]
+        },
+        {
+          "role": "CTO e Senior Developer",
+          "company": "Denusa (Destilaria Nova União S/A - Brasil)",
+          "desc": "Gestão do departamento de TI e liderança técnica de projetos corporativos. Desenvolvimento de aplicações web e administração de infraestrutura Linux/Windows. Manutenção do ERP TOTVS.",
+          "highlights": [
+            "Gestão do departamento de TI e liderança",
+            "Manutenção do ERP TOTVS"
+          ]
+        },
+        {
+          "role": "Senior Developer",
+          "company": "Segundamano.es",
+          "desc": "Responsável pelo departamento de desenvolvimento backend/fraude; programação e resolução de bugs.",
+          "highlights": ["Responsável por backend e fraude"]
+        },
+        {
+          "role": "Responsável de TI",
+          "company": "Plastificados de Terrassa",
+          "desc": "Direção da área informática e implementação de soluções de gestão interna e migração de sistemas."
+        },
+        {
+          "role": "Empresa Familiar / Desenvolvedor",
+          "company": "NELOSA",
+          "desc": "Desenvolvimento de sistemas de gestão e e‑commerce; manutenção de servidores e bases de dados; criação de um e‑commerce desde o zero."
+        }
+      ],
+      "education": [
+        {
+          "degree": "Licenciatura em Engenharia Informática",
+          "school": "Cibernos"
+        }
+      ],
+      "skills": [
+        "PHP",
+        "C#",
+        "C",
+        "C++",
+        "Python",
+        "Node.js",
+        "Bash",
+        "Perl",
+        "JavaScript",
+        "Laravel",
+        "Vue.js",
+        "Bootstrap",
+        "SQL Server",
+        "MySQL",
+        "PostgreSQL",
+        "Git",
+        "SVN",
+        "Linux",
+        "Windows Server",
+        "Trabalho em equipa",
+        "Capacidade de aprendizagem",
+        "Pontualidade e responsabilidade",
+        "Compromisso",
+        "Empatia",
+        "Flexibilidade e adaptabilidade",
+        "Comunicação",
+        "Resolução de problemas",
+        "Proativo",
+        "Capacidade de trabalho",
+        "Motivação",
+        "Liderança",
+        "Criatividade",
+        "Competências sociais",
+        "Capacidade de raciocínio",
+        "Atenção ao detalhe"
+      ],
+      "languages": [
+        { "name": "Espanhol", "level": "Nativo" },
+        { "name": "Catalão", "level": "Nativo" },
+        { "name": "Inglês", "level": "Fluente" },
+        { "name": "Português", "level": "Fluente" }
+      ],
+      "cover_letter": "**Sou um desenvolvedor FullStack sénior com mais de 25 anos de experiência, apaixonado por tecnologia e por trabalhar com pessoas.** Ao longo da minha carreira desenvolvi soluções em múltiplas linguagens e ambientes (PHP, C#, JavaScript), administrei bases de dados como SQL Server, MySQL e PostgreSQL, e gerei servidores Linux e Windows.\n\nA minha trajetória inclui também direção técnica e liderança de projetos em Espanha e Brasil, o que me deu uma visão ampla, madura e adaptável do mundo do software.\n\n**Destaco-me pela minha forma de trabalhar:** resolvo problemas complexos com calma, especialmente em situações críticas, e mantenho sempre uma atenção na arquitetura limpa, eficiência do código e desempenho. Integro-me facilmente nas equipas, colaboro, escuto, ajudo e mantenho uma atitude positiva mesmo em momentos difíceis.\n\nPara além das minhas competências técnicas, trago uma dimensão humana que valorizo tanto como o código: responsabilidade, empatia, boa comunicação e capacidade para gerar confiança e um bom ambiente. Falo espanhol, catalão, inglês e português com fluência, o que me permite colaborar de forma natural em ambientes multiculturais.\n\n**Em resumo: sou um profissional sénior com valores, trato humano e uma abordagem colaborativa, alguém com experiência real e com quem é fácil e agradável trabalhar.**"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mqm.dev/sitemap.xml
+# If you want to block any path, add Disallow: /path
