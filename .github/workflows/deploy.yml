@@ -41,7 +41,8 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: "Deploy completado: mqm.digital"
           to: "miguel.quesada.martinez.1975@gmail.com"
-          from: "GitHub Actions <no-reply@github.com>"
+          #from: "GitHub Actions <no-reply@github.com>"
+          from: "Miguel Quesada Martinez <miguel.quesada.martinez.1975@gmail.com>"
           body: |
             El proceso de despliegue de tu web mqm.digital ha finalizado.
 
