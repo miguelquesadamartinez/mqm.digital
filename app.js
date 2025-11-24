@@ -303,8 +303,8 @@ async function loadData() {
       const ld = {
         "@context": "https://schema.org",
         "@type": "Person",
-        name: L("name") || data.name,
-        jobTitle: L("title") || data.title,
+        name: L("name"),
+        jobTitle: L("title"),
         url: "https://mqm.digital/",
         image: "/favicon.svg",
         email: data.contact && data.contact.email,
@@ -344,6 +344,7 @@ async function loadData() {
 }
 
 function renderRoute() {
+  if (!data) return; // Don't render if data is not loaded yet
   const hash = location.hash.replace("#", "") || "about";
   switch (hash) {
     case "cover":
@@ -368,19 +369,16 @@ function renderRoute() {
 }
 
 function renderHeader() {
+  if (!data) return "";
   return `
     <section class="card header" aria-labelledby="profile-name">
       <div style="display:flex;gap:16px;align-items:center">
         <div class="avatar">
-          <img src="MiguelQuesada.PNG" alt="${escapeHtml(
-            L("name") || data.name
-          )}" />
+          <img src="MiguelQuesada.PNG" alt="${escapeHtml(L("name"))}" />
         </div>
         <div>
-          <div id="profile-name" class="h-name">${escapeHtml(
-            L("name") || data.name
-          )}</div>
-          <div class="h-title">${escapeHtml(L("title") || data.title)}</div>
+          <div id="profile-name" class="h-name">${escapeHtml(L("name"))}</div>
+          <div class="h-title">${escapeHtml(L("title"))}</div>
         </div>
       </div>
     </section>
@@ -392,9 +390,9 @@ function renderAbout() {
     ${renderHeader()}
     <section class="card" id="about-section">
       <h2 class="section-title">${t("section.cover")}</h2>
-        <p>${renderInlineBold(L("summary") || data.summary)}</p>
+        <p>${renderInlineBold(L("summary"))}</p>
         ${(() => {
-          const text = L("cover_letter") || data.cover_letter || "";
+          const text = L("cover_letter") || "";
           const paragraphs = String(text)
             .split(/\n\s*\n/)
             .map((p) => p.trim())
@@ -614,7 +612,7 @@ function renderContact() {
 }
 
 function renderCoverLetter() {
-  const text = L("cover_letter") || data.cover_letter || "";
+  const text = L("cover_letter") || "";
   // split into paragraphs by double newlines
   const paragraphs = String(text)
     .split(/\n\s*\n/)
