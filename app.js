@@ -64,6 +64,11 @@ const translations = {
     website: "Web",
     databases: "Bases de datos",
     version_control: "Control de versiones",
+    cookies: {
+      text: "Utilizamos cookies para mejorar tu experiencia de navegación y recordar tus preferencias de idioma. Al continuar navegando, aceptas nuestra política de cookies.",
+      accept: "Aceptar",
+      reject: "Rechazar",
+    },
   },
   en: {
     nav: {
@@ -101,6 +106,11 @@ const translations = {
     website: "Website",
     databases: "Databases",
     version_control: "Version control",
+    cookies: {
+      text: "We use cookies to improve your browsing experience and remember your language preferences. By continuing to browse, you accept our cookie policy.",
+      accept: "Accept",
+      reject: "Reject",
+    },
   },
   pt: {
     nav: {
@@ -138,6 +148,11 @@ const translations = {
     website: "Site",
     databases: "Bancos de dados",
     version_control: "Controle de versão",
+    cookies: {
+      text: "Utilizamos cookies para melhorar sua experiência de navegação e lembrar suas preferências de idioma. Ao continuar navegando, você aceita nossa política de cookies.",
+      accept: "Aceitar",
+      reject: "Rejeitar",
+    },
   },
 };
 
@@ -179,6 +194,16 @@ function setLang(lang) {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
     el.textContent = t(key);
+  });
+  // update cookie banner texts
+  document.querySelectorAll("[data-i18n-cookie]").forEach((el) => {
+    const key = el.dataset.i18nCookie;
+    const cookieText = t("cookies." + key);
+    if (el.tagName === "P") {
+      el.textContent = cookieText;
+    } else if (el.tagName === "BUTTON") {
+      el.textContent = cookieText;
+    }
   });
   // update loading and footer
   const ld = document.getElementById("loading");
@@ -692,3 +717,42 @@ function normalizeAboutLayout() {
 
 document.addEventListener("DOMContentLoaded", normalizeAboutLayout);
 window.addEventListener("hashchange", normalizeAboutLayout);
+
+// Cookie Consent GDPR
+(function initCookieConsent() {
+  const COOKIE_CONSENT_KEY = "cookieConsent";
+  const banner = document.getElementById("cookie-banner");
+  const acceptBtn = document.getElementById("cookie-accept");
+  const rejectBtn = document.getElementById("cookie-reject");
+
+  if (!banner || !acceptBtn || !rejectBtn) return;
+
+  // Check if user has already made a choice
+  const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+
+  if (consent === null) {
+    // Show banner after a short delay
+    setTimeout(() => {
+      banner.classList.add("show");
+    }, 1000);
+  }
+
+  function hideBanner() {
+    banner.classList.remove("show");
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 300);
+  }
+
+  acceptBtn.addEventListener("click", () => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    hideBanner();
+  });
+
+  rejectBtn.addEventListener("click", () => {
+    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
+    // If rejected, clear language preference (optional)
+    // localStorage.removeItem("lang");
+    hideBanner();
+  });
+})();
