@@ -39,7 +39,7 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "Deploy completado: mqm.digital"
+          subject: "Deploy completado en mqm.digital: ${{ github.event.head_commit.message }}"
           to: "miguel.quesada.martinez.1975@gmail.com"
           #from: "GitHub Actions <no-reply@github.com>"
           from: "Miguel Quesada Martinez <miguel.quesada.martinez.1975@gmail.com>"
@@ -47,7 +47,8 @@ jobs:
             El proceso de despliegue de tu web mqm.digital ha finalizado.
 
             • Resultado del job: ${{ job.status }}
-            • Commit: ${{ github.sha }}
+            • Commit: ${{ github.event.head_commit.message }}
+            • SHA: ${{ github.sha }}
             • Ejecutado por: ${{ github.actor }}
 
             Si hubo errores, revisa: https://github.com/${{ github.repository }}/actions
