@@ -2,7 +2,7 @@
 
 Portfolio personal multilingüe de Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend
 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fmqm.dev)](https://mqm.dev)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fmqm.digital)](https://mqm.digital)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 🌐 Descripción
@@ -11,7 +11,7 @@ Sitio web de currículum vitae y portfolio personal con soporte multilingüe com
 
 Desarrollado como SPA (Single Page Application) vanilla JavaScript sin frameworks ni herramientas de build, enfocado en rendimiento, accesibilidad y SEO.
 
-**🔗 URL:** [https://mqm.dev](https://mqm.dev)
+**🔗 URL:** [https://mqm.digital](https://mqm.digital)
 
 ## ✨ Características
 
@@ -192,7 +192,7 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 
 **Miguel Quesada Martínez**
 
-- Website: [mqm.dev](https://mqm.dev)
+- Website: [mqm.digital](https://mqm.digital)
 - GitHub: [@miguelquesadamartinez](https://github.com/miguelquesadamartinez)
 - LinkedIn: [miguelquesadamartinez](https://www.linkedin.com/in/miguelquesadamartinez)
 - Email: miguel.quesada.martinez.1975@gmail.com

@@ -280,7 +280,7 @@ async function loadData() {
         "@type": "Person",
         name: L("name") || data.name,
         jobTitle: L("title") || data.title,
-        url: "https://mqm.dev/",
+        url: "https://mqm.digital/",
         image: "/favicon.svg",
         email: data.contact && data.contact.email,
         telephone: data.contact && data.contact.phone,
