@@ -721,17 +721,60 @@ window.addEventListener("hashchange", normalizeAboutLayout);
 // Cookie Consent GDPR
 (function initCookieConsent() {
   const COOKIE_CONSENT_KEY = "cookieConsent";
+  const GA_MEASUREMENT_ID = "G-BSVNN0HTNW";
   const banner = document.getElementById("cookie-banner");
   const acceptBtn = document.getElementById("cookie-accept");
   const rejectBtn = document.getElementById("cookie-reject");
 
   if (!banner || !acceptBtn || !rejectBtn) return;
 
+  // Function to load Google Analytics
+  function loadGoogleAnalytics() {
+    // Load gtag.js script
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+
+    // Initialize gtag
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    gtag("config", GA_MEASUREMENT_ID, {
+      anonymize_ip: true,
+      cookie_flags: "SameSite=None;Secure",
+    });
+  }
+
+  // Function to disable Google Analytics
+  function disableGoogleAnalytics() {
+    // Set opt-out flag
+    window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+
+    // Clear any existing GA cookies
+    const cookies = document.cookie.split(";");
+    cookies.forEach((cookie) => {
+      const [name] = cookie.split("=");
+      if (name.trim().startsWith("_ga") || name.trim().startsWith("_gid")) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      }
+    });
+  }
+
   // Check if user has already made a choice
   const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
 
-  if (consent === null) {
-    // Show banner after a short delay
+  if (consent === "accepted") {
+    // User previously accepted, load GA
+    loadGoogleAnalytics();
+  } else if (consent === "rejected") {
+    // User previously rejected, disable GA
+    disableGoogleAnalytics();
+  } else {
+    // No decision yet, show banner
     setTimeout(() => {
       banner.classList.add("show");
     }, 1000);
@@ -746,13 +789,13 @@ window.addEventListener("hashchange", normalizeAboutLayout);
 
   acceptBtn.addEventListener("click", () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    loadGoogleAnalytics();
     hideBanner();
   });
 
   rejectBtn.addEventListener("click", () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
-    // If rejected, clear language preference (optional)
-    // localStorage.removeItem("lang");
+    disableGoogleAnalytics();
     hideBanner();
   });
 })();
