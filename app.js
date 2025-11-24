@@ -69,6 +69,19 @@ const translations = {
       accept: "Aceptar",
       reject: "Rechazar",
     },
+    contact_form: {
+      title: "Envíame un mensaje",
+      email_label: "Tu email",
+      email_placeholder: "tu@email.com",
+      subject_label: "Asunto",
+      subject_placeholder: "Escribe el asunto...",
+      message_label: "Mensaje",
+      message_placeholder: "Escribe tu mensaje...",
+      send_button: "Enviar mensaje",
+      sending: "Enviando...",
+      success: "¡Mensaje enviado correctamente!",
+      error: "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+    },
   },
   en: {
     nav: {
@@ -111,6 +124,19 @@ const translations = {
       accept: "Accept",
       reject: "Reject",
     },
+    contact_form: {
+      title: "Send me a message",
+      email_label: "Your email",
+      email_placeholder: "your@email.com",
+      subject_label: "Subject",
+      subject_placeholder: "Write the subject...",
+      message_label: "Message",
+      message_placeholder: "Write your message...",
+      send_button: "Send message",
+      sending: "Sending...",
+      success: "Message sent successfully!",
+      error: "Error sending the message. Please try again.",
+    },
   },
   pt: {
     nav: {
@@ -152,6 +178,19 @@ const translations = {
       text: "Utilizamos cookies para melhorar sua experiência de navegação e lembrar suas preferências de idioma. Ao continuar navegando, você aceita nossa política de cookies.",
       accept: "Aceitar",
       reject: "Rejeitar",
+    },
+    contact_form: {
+      title: "Envie-me uma mensagem",
+      email_label: "Seu email",
+      email_placeholder: "seu@email.com",
+      subject_label: "Assunto",
+      subject_placeholder: "Escreva o assunto...",
+      message_label: "Mensagem",
+      message_placeholder: "Escreva sua mensagem...",
+      send_button: "Enviar mensagem",
+      sending: "Enviando...",
+      success: "Mensagem enviada com sucesso!",
+      error: "Erro ao enviar a mensagem. Por favor, tente novamente.",
     },
   },
 };
@@ -607,8 +646,108 @@ function renderContact() {
       data.i18n[currentLang].contact.website) ||
       data.contact.website
   )}</a></p>
+      
+      <h3 class="section-title" style="margin-top:24px">${t(
+        "contact_form.title"
+      )}</h3>
+      <form id="contact-form" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="07a8eaff-9e4c-40e0-b51c-90eeafcf6367">
+        <input type="hidden" name="subject" value="Nuevo mensaje desde mqm.digital">
+        <input type="hidden" name="from_name" value="Formulario Web mqm.digital">
+        <input type="hidden" name="redirect" value="false">
+        
+        <div class="form-group">
+          <label for="contact-email">${t("contact_form.email_label")}</label>
+          <input 
+            type="email" 
+            id="contact-email" 
+            name="email" 
+            placeholder="${t("contact_form.email_placeholder")}" 
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact-subject">${t(
+            "contact_form.subject_label"
+          )}</label>
+          <input 
+            type="text" 
+            id="contact-subject" 
+            name="custom_subject" 
+            placeholder="${t("contact_form.subject_placeholder")}" 
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="contact-message">${t(
+            "contact_form.message_label"
+          )}</label>
+          <textarea 
+            id="contact-message" 
+            name="message" 
+            rows="5" 
+            placeholder="${t("contact_form.message_placeholder")}" 
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="submit-btn">${t(
+          "contact_form.send_button"
+        )}</button>
+        <div id="form-status" class="form-status"></div>
+      </form>
     </section>
   `);
+
+  // Attach form submit handler
+  const form = document.getElementById("contact-form");
+  if (form) {
+    form.addEventListener("submit", handleContactFormSubmit);
+  }
+}
+
+async function handleContactFormSubmit(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const statusDiv = document.getElementById("form-status");
+  const submitBtn = form.querySelector(".submit-btn");
+
+  // Disable submit button and show loading state
+  submitBtn.disabled = true;
+  submitBtn.textContent = t("contact_form.sending");
+  statusDiv.textContent = "";
+  statusDiv.className = "form-status";
+
+  try {
+    const formData = new FormData(form);
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      form.reset();
+      statusDiv.textContent = t("contact_form.success");
+      statusDiv.className = "form-status success";
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        statusDiv.textContent = "";
+        statusDiv.className = "form-status";
+      }, 5000);
+    } else {
+      throw new Error("Form submission failed");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    statusDiv.textContent = t("contact_form.error");
+    statusDiv.className = "form-status error";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = t("contact_form.send_button");
+  }
 }
 
 function renderCoverLetter() {
