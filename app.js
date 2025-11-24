@@ -633,19 +633,6 @@ function renderContact() {
     data.contact.email
   }">${escapeHtml(data.contact.email)}</a></p>
       <p class="meta">${t("phone")}: ${escapeHtml(data.contact.phone)}</p>
-      <p class="meta">${t("website")}: <a href="${
-    (data.i18n &&
-      data.i18n[currentLang] &&
-      data.i18n[currentLang].contact &&
-      data.i18n[currentLang].contact.website) ||
-    data.contact.website
-  }" target="_blank" rel="noopener">${escapeHtml(
-    (data.i18n &&
-      data.i18n[currentLang] &&
-      data.i18n[currentLang].contact &&
-      data.i18n[currentLang].contact.website) ||
-      data.contact.website
-  )}</a></p>
       
       <h3 class="section-title" style="margin-top:24px">${t(
         "contact_form.title"
