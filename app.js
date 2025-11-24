@@ -728,7 +728,7 @@ window.addEventListener("hashchange", normalizeAboutLayout);
 
   if (!banner || !acceptBtn || !rejectBtn) return;
 
-  // Function to load Google Analytics
+  // Function to load Google Analytics and custom analytics script
   function loadGoogleAnalytics() {
     // Load gtag.js script
     const script = document.createElement("script");
@@ -747,6 +747,12 @@ window.addEventListener("hashchange", normalizeAboutLayout);
       anonymize_ip: true,
       cookie_flags: "SameSite=None;Secure",
     });
+
+    // Load custom analytics.js script
+    const analyticsScript = document.createElement("script");
+    analyticsScript.src = "/analytics.js";
+    analyticsScript.defer = true;
+    document.body.appendChild(analyticsScript);
   }
 
   // Function to disable Google Analytics
