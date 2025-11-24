@@ -491,6 +491,11 @@ a:not(.btn):focus-visible {
   margin-top: 16px;
 }
 
+.contact-form + .section-title,
+.section-title[style*="margin-top:24px"] {
+  text-align: center;
+}
+
 .form-group {
   margin-bottom: 16px;
 }
@@ -539,6 +544,8 @@ a:not(.btn):focus-visible {
   transition: all 0.2s;
   width: 100%;
   max-width: 200px;
+  display: block;
+  margin: 0 auto;
 }
 
 .submit-btn:hover:not(:disabled) {
