@@ -1,1 +1,18 @@
+# Archivos de entorno
+.env
+.env.local
+
+# Dependencias de Node (si se agregan en el futuro)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Cache de Netlify
+.netlify/
 

@@ -33,9 +33,7 @@ const translations = {
       about: "Carta de presentación",
       cover: "Carta de presentación",
       experience: "Experiencia",
-      education: "Educación",
-      skills: "Habilidades",
-      contact: "Contacto",
+      aboutme: "Sobre Mí",
     },
     section: {
       about: "Acerca",
@@ -45,6 +43,7 @@ const translations = {
       skills: "Habilidades",
       contact: "Contacto",
       languages: "Idiomas",
+      aboutme: "Sobre Mí",
     },
     loading: "Cargando currículum…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -88,9 +87,7 @@ const translations = {
       about: "Cover Letter",
       cover: "Cover Letter",
       experience: "Experience",
-      education: "Education",
-      skills: "Skills",
-      contact: "Contact",
+      aboutme: "About Me",
     },
     section: {
       about: "About",
@@ -100,6 +97,7 @@ const translations = {
       skills: "Skills",
       contact: "Contact",
       languages: "Languages",
+      aboutme: "About Me",
     },
     loading: "Loading resume…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -143,9 +141,7 @@ const translations = {
       cover: "Carta de apresentação",
       about: "Carta de apresentação",
       experience: "Experiência",
-      education: "Educação",
-      skills: "Competências",
-      contact: "Contato",
+      aboutme: "Sobre Mim",
     },
     section: {
       cover: "Carta de apresentação",
@@ -155,6 +151,7 @@ const translations = {
       skills: "Competências",
       contact: "Contato",
       languages: "Idiomas",
+      aboutme: "Sobre Mim",
     },
     loading: "Carregando currículo…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -393,14 +390,8 @@ function renderRoute() {
     case "experience":
       renderExperience();
       break;
-    case "education":
-      renderEducation();
-      break;
-    case "skills":
-      renderSkills();
-      break;
-    case "contact":
-      renderContact();
+    case "aboutme":
+      renderAboutMe();
       break;
     default:
       renderAbout();
@@ -583,11 +574,15 @@ function renderExperience() {
   `);
 }
 
-function renderEducation() {
+function renderAboutMe() {
   app.innerHTML = patchSectionWithCV(`
     ${renderHeader()}
     <section class="card">
-      <h2 class="section-title">${t("section.education")}</h2>
+      <h2 class="section-title">${t("section.aboutme")}</h2>
+      
+      <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
+        "section.education"
+      )}</h3>
       <ul class="list">
         ${data.education
           .map((ed, i) => {
@@ -603,15 +598,10 @@ function renderEducation() {
           })
           .join("")}
       </ul>
-    </section>
-  `);
-}
-
-function renderSkills() {
-  app.innerHTML = patchSectionWithCV(`
-    ${renderHeader()}
-    <section class="card">
-      <h2 class="section-title">${t("section.skills")}</h2>
+      
+      <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
+        "section.skills"
+      )}</h3>
       <div class="chips">${(data.i18n &&
       data.i18n[currentLang] &&
       data.i18n[currentLang].skills
@@ -620,121 +610,67 @@ function renderSkills() {
       )
         .map((s) => `<span class="chip">${escapeHtml(s)}</span>`)
         .join("")}</div>
-    </section>
-  `);
-}
-
-function renderContact() {
-  app.innerHTML = patchSectionWithCV(`
-    ${renderHeader()}
-    <section class="card">
-      <h2 class="section-title">${t("section.contact")}</h2>
+      
+      ${
+        {
+          es: `<h3 class='section-title' style='margin-top:24px;font-size:1.1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.es &&
+          data.i18n.es.languages
+            ? data.i18n.es.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+          en: `<h3 class='section-title' style='margin-top:24px;font-size:1.1rem'>Languages</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.en &&
+          data.i18n.en.languages
+            ? data.i18n.en.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+          pt: `<h3 class='section-title' style='margin-top:24px;font-size:1.1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
+          data.i18n.pt &&
+          data.i18n.pt.languages
+            ? data.i18n.pt.languages
+            : data.languages
+          )
+            .map(
+              (l) =>
+                `<div class='language'><div class='name'>${escapeHtml(
+                  l.name
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+            )
+            .join("")}</div>`,
+        }[currentLang]
+      }
+      
+      <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
+        "section.contact"
+      )}</h3>
       <p class="meta">${t("email")}: <a href="mailto:${
     data.contact.email
   }">${escapeHtml(data.contact.email)}</a></p>
       <p class="meta">${t("phone")}: ${escapeHtml(data.contact.phone)}</p>
-      
-      <h3 class="section-title" style="margin-top:24px">${t(
-        "contact_form.title"
-      )}</h3>
-      <form id="contact-form" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="07a8eaff-9e4c-40e0-b51c-90eeafcf6367">
-        <input type="hidden" name="subject" value="Nuevo mensaje desde mqm.digital">
-        <input type="hidden" name="from_name" value="Formulario Web mqm.digital">
-        <input type="hidden" name="redirect" value="false">
-        
-        <div class="form-group">
-          <label for="contact-email">${t("contact_form.email_label")}</label>
-          <input 
-            type="email" 
-            id="contact-email" 
-            name="email" 
-            placeholder="${t("contact_form.email_placeholder")}" 
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="contact-subject">${t(
-            "contact_form.subject_label"
-          )}</label>
-          <input 
-            type="text" 
-            id="contact-subject" 
-            name="custom_subject" 
-            placeholder="${t("contact_form.subject_placeholder")}" 
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="contact-message">${t(
-            "contact_form.message_label"
-          )}</label>
-          <textarea 
-            id="contact-message" 
-            name="message" 
-            rows="5" 
-            placeholder="${t("contact_form.message_placeholder")}" 
-            required
-          ></textarea>
-        </div>
-        <button type="submit" class="submit-btn">${t(
-          "contact_form.send_button"
-        )}</button>
-        <div id="form-status" class="form-status"></div>
-      </form>
+      <p class="meta">${t("location")}: ${escapeHtml(
+    (data.i18n &&
+      data.i18n[currentLang] &&
+      data.i18n[currentLang].contact &&
+      data.i18n[currentLang].contact.location) ||
+      data.contact.location
+  )}</p>
     </section>
   `);
-
-  // Attach form submit handler
-  const form = document.getElementById("contact-form");
-  if (form) {
-    form.addEventListener("submit", handleContactFormSubmit);
-  }
-}
-
-async function handleContactFormSubmit(e) {
-  e.preventDefault();
-
-  const form = e.target;
-  const statusDiv = document.getElementById("form-status");
-  const submitBtn = form.querySelector(".submit-btn");
-
-  // Disable submit button and show loading state
-  submitBtn.disabled = true;
-  submitBtn.textContent = t("contact_form.sending");
-  statusDiv.textContent = "";
-  statusDiv.className = "form-status";
-
-  try {
-    const formData = new FormData(form);
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      form.reset();
-      statusDiv.textContent = t("contact_form.success");
-      statusDiv.className = "form-status success";
-
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        statusDiv.textContent = "";
-        statusDiv.className = "form-status";
-      }, 5000);
-    } else {
-      throw new Error("Form submission failed");
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    statusDiv.textContent = t("contact_form.error");
-    statusDiv.className = "form-status error";
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = t("contact_form.send_button");
-  }
 }
 
 function renderCoverLetter() {

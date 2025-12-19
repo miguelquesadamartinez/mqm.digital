@@ -79,18 +79,42 @@ Orden de precedencia:
 
 ### Instalación
 
-No requiere instalación de dependencias. Solo necesitas un servidor HTTP estático.
+**Requisitos:**
+
+- Node.js (para desarrollo local)
+- Cuenta en Netlify (para despliegue con formulario de contacto)
 
 ```bash
-# Con Python
+# Clonar el repositorio
+git clone https://github.com/miguelquesadamartinez/mqm.digital.git
+cd mqm.digital
+
+# Configurar variables de entorno
+cp .env.example .env
+# Edita .env y añade tu WEB3FORMS_ACCESS_KEY
+
+# Instalar Netlify CLI (opcional, para desarrollo local)
+npm install -g netlify-cli
+
+# Ejecutar en desarrollo con Netlify Dev
+netlify dev
+
+# O usar cualquier servidor HTTP estático
 python -m http.server 8000
-
-# Con Node.js
+# O
 npx http-server
-
-# Con PHP
-php -S localhost:8000
 ```
+
+**Configuración de variables de entorno:**
+
+El formulario de contacto requiere una access key de [Web3Forms](https://web3forms.com/). Por seguridad, esta clave NO está en el código:
+
+1. Regístrate en [web3forms.com](https://web3forms.com/) y obtén tu access key
+2. En Netlify: Settings → Environment variables → Add variable:
+   - Key: `WEB3FORMS_ACCESS_KEY`
+   - Value: `tu_access_key_aqui`
+
+Para desarrollo local: crea un archivo `.env` basado en `.env.example`
 
 Accede a: `http://localhost:8000/es/`
 
@@ -168,20 +192,30 @@ Al actualizar archivos estáticos, incrementa el parámetro de versión:
 
 ## 🌐 Despliegue
 
-Compatible con cualquier hosting de archivos estáticos:
+### Netlify (Recomendado)
 
-- **GitHub Pages**
-- **Netlify**
-- **Vercel**
-- **AWS S3 + CloudFront**
-- **Firebase Hosting**
+El formulario de contacto usa Netlify Functions para mantener las claves API seguras.
 
-### Ejemplo con GitHub Pages
+1. **Conecta tu repositorio** en [netlify.com](https://netlify.com)
+2. **Configura variables de entorno**:
+   - Ve a Site settings → Environment variables
+   - Añade: `WEB3FORMS_ACCESS_KEY` con tu clave de Web3Forms
+3. **Deploy automático**: Netlify detectará automáticamente la función en `/netlify/functions/`
+
+### Otras plataformas
+
+Si despliegas en GitHub Pages, Vercel u otro hosting estático:
+
+- El formulario de contacto **no funcionará** sin backend
+- Opciones:
+  1. Usar Netlify Functions (recomendado)
+  2. Implementar un backend propio
+  3. Usar un servicio alternativo de formularios con CORS habilitado
+
+### Variables de entorno requeridas
 
 ```bash
-# Configurar en Settings > Pages
-# Source: Deploy from a branch
-# Branch: main / (root)
+WEB3FORMS_ACCESS_KEY=your_access_key_from_web3forms
 ```
 
 ## 📝 Licencia

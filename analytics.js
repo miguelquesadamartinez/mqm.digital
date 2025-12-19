@@ -28,6 +28,7 @@ document.addEventListener("click", function (e) {
   let element = e.target.closest("button, .btn");
 
   if (element) {
+    console.log("Botón clickeado:", element.innerText.trim());
     gtag("event", "button_click", {
       button_text: element.innerText.trim().substring(0, 50),
     });
@@ -45,6 +46,7 @@ document.addEventListener("click", function (e) {
 
   // Detecta si el enlace es externo
   if (href.startsWith("http") && !href.includes(location.hostname)) {
+    console.log("Enlace externo clickeado:", href);
     gtag("event", "external_link_click", {
       url: href,
     });
@@ -64,6 +66,7 @@ document.addEventListener("click", function (e) {
   let extension = url.split(".").pop().toLowerCase();
 
   if (extensiones.includes(extension)) {
+    console.log("Descarga de archivo:", url);
     gtag("event", "file_download", {
       file_url: url,
       file_type: extension,
