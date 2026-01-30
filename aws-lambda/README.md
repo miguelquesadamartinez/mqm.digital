@@ -73,33 +73,3 @@ const response = await fetch("https://TU-API-GATEWAY-URL/submit-form", {
   body: JSON.stringify(formData),
 });
 ```
-
-### 7. Desplegar en S3
-
-Sube los archivos actualizados a tu bucket de S3 y invalida la caché de CloudFront.
-
-## Costos estimados
-
-- **Lambda:** Capa gratuita incluye 1M de invocaciones/mes
-- **API Gateway:** Capa gratuita incluye 1M de llamadas/mes los primeros 12 meses
-- **Después:** ~$3.50 por millón de requests
-
-Para un sitio personal con formulario de contacto, probablemente siempre estarás en la capa gratuita.
-
-## Seguridad adicional (opcional)
-
-### Usar AWS Secrets Manager
-
-Para mayor seguridad, puedes guardar la access_key en Secrets Manager:
-
-1. Ve a AWS Secrets Manager
-2. Crea un nuevo secreto con la access_key
-3. Modifica la función Lambda para recuperar el secreto
-4. Añade permisos IAM a Lambda para leer Secrets Manager
-
-### Limitar rate limiting
-
-Configura throttling en API Gateway para prevenir abuso:
-
-- Settings → Throttling → Rate: 10 requests/segundo
-- Burst: 20 requests
