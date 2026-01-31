@@ -156,6 +156,267 @@ Al actualizar archivos estáticos, incrementa el parámetro de versión:
 
 ✅ **Usar `renderInlineBold()`** para texto con formato `**negrita**` (escapa automáticamente)
 
+## 🚀 Deployment
+
+### Despliegue automático con GitHub Workflows a AWS
+
+El sitio se despliega automáticamente a **AWS S3 + CloudFront** usando GitHub Actions cada vez que se hace push a la rama `main`. El proceso es completamente automatizado e incluye sincronización de archivos, invalidación de caché y notificación por email.
+
+**Flujo de trabajo:**
+
+1. **Trigger automático**: El workflow se ejecuta al hacer push a `main`
+2. **Sincronización S3**: Los archivos se suben al bucket S3 con sincronización incremental
+3. **Invalidación de caché**: CloudFront actualiza su caché para reflejar los cambios inmediatamente
+4. **Notificación**: Se envía un email confirmando el deployment exitoso
+5. **Live**: El sitio se actualiza en [mqm.digital](https://mqm.digital)
+
+### Configuración paso a paso
+
+#### 1. **Configurar AWS S3 + CloudFront**
+
+**Crear bucket S3:**
+
+1. Accede a la [consola de AWS S3](https://s3.console.aws.amazon.com/)
+2. Crea un bucket con el nombre de tu dominio (ej: `mqm.digital`)
+3. Configura el bucket para hosting estático:
+   - Properties → Static website hosting → Enable
+   - Index document: `index.html`
+   - Error document: `index.html` (para SPA routing)
+4. Configura la política del bucket para acceso público (o acceso vía CloudFront)
+
+**Crear distribución CloudFront:**
+
+1. Accede a [CloudFront](https://console.aws.amazon.com/cloudfront/)
+2. Crea una nueva distribución:
+   - Origin domain: Tu bucket S3
+   - Origin access: Origin access control (OAC) recomendado
+   - Default root object: `index.html`
+   - Custom error responses: 403 y 404 → `/index.html` (para SPA)
+3. Configura tu dominio personalizado (si aplica)
+4. Guarda el **Distribution ID** (lo necesitarás para los secrets)
+
+**Crear usuario IAM con permisos:**
+
+1. Ve a IAM → Users → Create user
+2. Nombre: `github-actions-deploy` (o similar)
+3. Adjunta las siguientes políticas:
+   - Política personalizada para S3:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "s3:PutObject",
+           "s3:GetObject",
+           "s3:DeleteObject",
+           "s3:ListBucket"
+         ],
+         "Resource": ["arn:aws:s3:::mqm.digital", "arn:aws:s3:::mqm.digital/*"]
+       }
+     ]
+   }
+   ```
+
+   - Política para CloudFront:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": [
+           "cloudfront:CreateInvalidation",
+           "cloudfront:GetInvalidation",
+           "cloudfront:ListInvalidations"
+         ],
+         "Resource": "*"
+       }
+     ]
+   }
+   ```
+4. Crea las credenciales de acceso (Access Key):
+   - Security credentials → Create access key
+   - Guarda el **Access Key ID** y **Secret Access Key**
+
+#### 2. **Configurar Secrets en GitHub**
+
+En tu repositorio de GitHub: **Settings → Secrets and variables → Actions → New repository secret**
+
+Añade los siguientes secrets:
+
+| Secret Name                  | Descripción                             | Dónde obtenerlo                    |
+| ---------------------------- | --------------------------------------- | ---------------------------------- |
+| `AWS_ACCESS_KEY_ID`          | Access Key ID del usuario IAM           | Credenciales IAM creadas en paso 1 |
+| `AWS_SECRET_ACCESS_KEY`      | Secret Access Key del usuario IAM       | Credenciales IAM creadas en paso 1 |
+| `CLOUDFRONT_DISTRIBUTION_ID` | ID de la distribución CloudFront        | CloudFront → Distributions → ID    |
+| `SMTP_SERVER`                | Servidor SMTP para notificaciones email | Gmail: `smtp.gmail.com`            |
+| `SMTP_PORT`                  | Puerto SMTP                             | Gmail: `587`                       |
+| `SMTP_USERNAME`              | Usuario email para SMTP                 | Tu email completo                  |
+| `SMTP_PASSWORD`              | Contraseña de aplicación SMTP           | Gmail: App password generada       |
+
+**Nota para Gmail:** Si usas Gmail, necesitas crear una [contraseña de aplicación](https://myaccount.google.com/apppasswords) en lugar de usar tu contraseña normal.
+
+#### 3. **Estructura del Workflow**
+
+El workflow está en `.github/workflows/deploy.yml` y contiene tres pasos principales:
+
+```yaml
+name: Deploy Static Website to S3 + CloudFront
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Sincronizar archivos con S3
+      - name: Sync files to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: mqm.digital
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-2
+          SOURCE_DIR: "./"
+
+      # 2. Invalidar caché de CloudFront
+      - name: Invalidate CloudFront cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          PATHS: "/*"
+          AWS_REGION: us-east-2
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # 3. Enviar notificación por email
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Deploy completado en mqm.digital"
+          to: "miguel.quesada.martinez.1975@gmail.com"
+          from: "Miguel Quesada Martinez <miguel.quesada.martinez.1975@gmail.com>"
+```
+
+**Detalles de cada paso:**
+
+1. **Sync files to S3**: Sincroniza todos los archivos del proyecto al bucket S3
+   - `--delete`: Elimina archivos en S3 que ya no existen en el repo
+   - Sube solo archivos modificados (incremental)
+
+2. **Invalidate CloudFront cache**: Limpia el caché de CloudFront
+   - `PATHS: "/*"`: Invalida todos los archivos
+   - Asegura que los usuarios vean los cambios inmediatamente
+   - Tiempo de propagación: 1-3 minutos típicamente
+
+3. **Send email notification**: Envía confirmación del deployment
+   - Incluye información del commit y estado del job
+   - Facilita seguimiento de deployments
+
+#### 4. **Realizar el primer deploy**
+
+Una vez configurados todos los secrets:
+
+```bash
+# Asegúrate de estar en la rama main
+git checkout main
+
+# Haz un cambio o crea un commit vacío para probar
+git commit --allow-empty -m "Test deployment workflow"
+
+# Push a main para activar el workflow
+git push origin main
+```
+
+#### 5. **Monitorear el deployment**
+
+1. Ve a tu repositorio en GitHub
+2. Navega a la pestaña **Actions**
+3. Verás el workflow "Deploy Static Website to S3 + CloudFront" ejecutándose
+4. Haz clic en el workflow para ver los logs detallados de cada paso
+5. Recibirás un email cuando el deployment complete
+
+### Verificación del deployment
+
+**Verificar en AWS:**
+
+- **S3**: Comprueba que los archivos se actualizaron en el bucket
+- **CloudFront**: Verifica que la invalidación se completó en "Invalidations"
+
+**Verificar el sitio:**
+
+1. Accede a [mqm.digital](https://mqm.digital)
+2. Abre las herramientas de desarrollador (F12)
+3. Verifica que los cambios están reflejados
+4. Si necesitas, haz un hard refresh: `Ctrl+Shift+R` (o `Cmd+Shift+R` en Mac)
+
+**Tiempo típico de deployment completo:** 2-4 minutos
+
+- Sincronización S3: 30-60 segundos
+- Invalidación CloudFront: 1-3 minutos
+- Total: ~2-4 minutos desde push hasta sitio actualizado
+
+### Costos de AWS
+
+**Estimación mensual para sitio personal:**
+
+- **S3**: ~$0.023/GB almacenado + $0.09/GB transferido (primeros 100GB free tier)
+- **CloudFront**: Primeros 1TB/mes transferidos gratis (free tier 12 meses)
+- **Invalidaciones CloudFront**: Primeras 1,000/mes gratis, luego $0.005 por path
+
+**Para un sitio como mqm.digital**: < $1/mes después del free tier
+
+### Despliegue manual de emergencia (opcional)
+
+Si necesitas hacer un deployment manual sin usar GitHub Actions:
+
+```bash
+# Instalar AWS CLI
+pip install awscli
+
+# Configurar credenciales
+aws configure
+
+# Sincronizar con S3
+aws s3 sync ./ s3://mqm.digital --delete
+
+# Invalidar caché de CloudFront
+aws cloudfront create-invalidation \
+  --distribution-id E1234EXAMPLE \
+  --paths "/*"
+```
+
+### Troubleshooting
+
+**Problema: El workflow falla en "Sync files to S3"**
+
+- ✅ Verifica que `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY` sean correctos
+- ✅ Confirma que el usuario IAM tiene permisos en el bucket
+- ✅ Verifica que el nombre del bucket coincida con `AWS_S3_BUCKET`
+
+**Problema: Cambios no se ven en el sitio**
+
+- ✅ Espera 2-3 minutos para que la invalidación de CloudFront se propague
+- ✅ Verifica en CloudFront → Invalidations que se completó
+- ✅ Haz hard refresh en tu navegador: `Ctrl+Shift+R`
+
+**Problema: Falla la notificación por email**
+
+- ✅ Verifica que los secrets SMTP sean correctos
+- ✅ Si usas Gmail, asegúrate de usar una contraseña de aplicación
+- ✅ Este paso es opcional: el deployment funciona aunque falle el email
+
 ## 🎨 Personalización
 
 ### Colores (CSS variables en `styles.css`)
@@ -190,28 +451,6 @@ Al actualizar archivos estáticos, incrementa el parámetro de versión:
 - **Menú hamburguesa**: `.menu-toggle` + `.menu-overlay` con clase `.open`
 - **Breakpoints**: Cambios adaptativos en `styles.css`
 
-## 🌐 Despliegue
-
-### Netlify (Recomendado)
-
-El formulario de contacto usa Netlify Functions para mantener las claves API seguras.
-
-1. **Conecta tu repositorio** en [netlify.com](https://netlify.com)
-2. **Configura variables de entorno**:
-   - Ve a Site settings → Environment variables
-   - Añade: `WEB3FORMS_ACCESS_KEY` con tu clave de Web3Forms
-3. **Deploy automático**: Netlify detectará automáticamente la función en `/netlify/functions/`
-
-### Otras plataformas
-
-Si despliegas en GitHub Pages, Vercel u otro hosting estático:
-
-- El formulario de contacto **no funcionará** sin backend
-- Opciones:
-  1. Usar Netlify Functions (recomendado)
-  2. Implementar un backend propio
-  3. Usar un servicio alternativo de formularios con CORS habilitado
-
 ### Variables de entorno requeridas
 
 ```bash
@@ -220,7 +459,7 @@ WEB3FORMS_ACCESS_KEY=your_access_key_from_web3forms
 
 ## 📝 Licencia
 
-Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
+Este proyecto está bajo licencia MIT.
 
 ## 👤 Autor
 
