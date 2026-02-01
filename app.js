@@ -280,7 +280,7 @@ function updateMetaForRoute() {
 
   // Update canonical and hreflang alternate links to use language-specific paths
   try {
-    const origin = location.origin.replace(/\/$/, "");
+    const origin = location.protocol + "//" + location.host;
     const basePaths = { es: "/es/", en: "/en/", pt: "/pt/" };
     // canonical
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -341,7 +341,7 @@ async function loadData() {
         "@type": "Person",
         name: L("name"),
         jobTitle: L("title"),
-        url: "https://mqm.digital/",
+        url: location.protocol + "//" + location.host + "/",
         image: "/favicon.svg",
         email: data.contact && data.contact.email,
         telephone: data.contact && data.contact.phone,
@@ -434,9 +434,11 @@ function renderAbout() {
       <div class="social-links">
         <a class="social" href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M12 0.5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.77 8.205 11.36.6.11.82-.26.82-.58 0-.29-.01-1.04-.016-2.04-3.338.73-4.042-1.61-4.042-1.61-.546-1.39-1.333-1.76-1.333-1.76-1.09-.75.083-.74.083-.74 1.205.085 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.487.99.108-.78.418-1.3.76-1.6-2.665-.3-5.466-1.33-5.466-5.92 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 0 1 3.003-.404c1.02.005 2.045.138 3.003.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.6-2.804 5.615-5.476 5.91.43.37.823 1.1.823 2.22 0 1.6-.015 2.88-.015 3.27 0 .32.216.694.825.576C20.565 22.27 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+          <span class="social-label">GitHub</span>
         </a>
         <a class="social" href="https://www.linkedin.com/in/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zM8.5 8h3.84v2.2h.05c.54-1.02 1.87-2.1 3.85-2.1 4.12 0 4.88 2.71 4.88 6.24V24h-4v-7.44c0-1.78-.03-4.07-2.48-4.07-2.48 0-2.86 1.94-2.86 3.95V24h-4V8z"/></svg>
+          <span class="social-label">LinkedIn</span>
         </a>
       </div>
       <p class="meta about-contact">${t("location")}: ${escapeHtml(
