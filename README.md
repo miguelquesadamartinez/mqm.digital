@@ -81,29 +81,71 @@ Orden de precedencia:
 
 **Requisitos:**
 
-- Node.js (para desarrollo local)
-- Cuenta en Netlify (para despliegue con formulario de contacto)
+- Servidor HTTP estático (Python, Node.js, o Docker)
+- Cuenta en Netlify (opcional, para despliegue con formulario de contacto)
 
 ```bash
 # Clonar el repositorio
 git clone https://github.com/miguelquesadamartinez/mqm.digital.git
 cd mqm.digital
 
-# Configurar variables de entorno
+# Configurar variables de entorno (solo si usas el formulario de contacto)
 cp .env.example .env
 # Edita .env y añade tu WEB3FORMS_ACCESS_KEY
-
-# Instalar Netlify CLI (opcional, para desarrollo local)
-npm install -g netlify-cli
-
-# Ejecutar en desarrollo con Netlify Dev
-netlify dev
-
-# O usar cualquier servidor HTTP estático
-python -m http.server 8000
-# O
-npx http-server
 ```
+
+### Opción 1: Docker (Recomendado)
+
+**Usando Docker Compose:**
+
+```bash
+# Construir y ejecutar
+docker-compose up -d
+
+# Ver logs
+docker-compose logs -f
+
+# Detener
+docker-compose down
+
+# Reconstruir después de cambios
+docker-compose up -d --build
+```
+
+La aplicación estará disponible en: **http://localhost:8080**
+
+**Usando Docker directamente:**
+
+```bash
+# Construir la imagen
+docker build -t mqm-digital .
+
+# Ejecutar el contenedor
+docker run -d -p 8080:80 --name mqm-portfolio mqm-digital
+
+# Ver logs
+docker logs -f mqm-portfolio
+
+# Detener y eliminar
+docker stop mqm-portfolio
+docker rm mqm-portfolio
+```
+
+### Opción 2: Servidor local
+
+```bash
+# Python
+python -m http.server 8000
+
+# Node.js
+npx http-server
+
+# Netlify Dev (si usas las funciones serverless)
+npm install -g netlify-cli
+netlify dev
+```
+
+Accede a: `http://localhost:8000/es/` (o el puerto que uses)
 
 **Configuración de variables de entorno:**
 
@@ -201,6 +243,7 @@ El sitio se despliega automáticamente a **AWS S3 + CloudFront** usando GitHub A
 2. Nombre: `github-actions-deploy` (o similar)
 3. Adjunta las siguientes políticas:
    - Política personalizada para S3:
+
    ```json
    {
      "Version": "2012-10-17",
@@ -220,6 +263,7 @@ El sitio se despliega automáticamente a **AWS S3 + CloudFront** usando GitHub A
    ```
 
    - Política para CloudFront:
+
    ```json
    {
      "Version": "2012-10-17",
@@ -236,6 +280,7 @@ El sitio se despliega automáticamente a **AWS S3 + CloudFront** usando GitHub A
      ]
    }
    ```
+
 4. Crea las credenciales de acceso (Access Key):
    - Security credentials → Create access key
    - Guarda el **Access Key ID** y **Secret Access Key**
