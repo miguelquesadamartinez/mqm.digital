@@ -197,8 +197,8 @@ let currentLang =
   (navigator.language && navigator.language.startsWith("en")
     ? "en"
     : navigator.language && navigator.language.startsWith("pt")
-    ? "pt"
-    : "es");
+      ? "pt"
+      : "es");
 
 // detect language from path or from a server-provided initializer (window.INIT_LANG)
 (function detectInitialLang() {
@@ -295,7 +295,7 @@ function updateMetaForRoute() {
     // alternates
     ["es", "en", "pt"].forEach((lg) => {
       let el = document.querySelector(
-        'link[rel="alternate"][hreflang="' + lg + '"]'
+        'link[rel="alternate"][hreflang="' + lg + '"]',
       );
       if (!el) {
         el = document.createElement("link");
@@ -352,7 +352,7 @@ async function loadData() {
       };
       // remove existing JSON-LD if present
       const existing = document.querySelector(
-        'script[type="application/ld+json"][data-generated="true"]'
+        'script[type="application/ld+json"][data-generated="true"]',
       );
       if (existing) existing.remove();
       const s = document.createElement("script");
@@ -372,7 +372,7 @@ async function loadData() {
         <strong>Error cargando currículum.</strong>
         <div style="margin-top:8px">Asegúrate de que <code>data.json</code> está disponible en <code>/data.json</code>.</div>
         <div style="margin-top:8px;color:var(--muted);font-size:0.9rem">Detalle: ${escapeHtml(
-          msg
+          msg,
         )}</div>
         <div style="margin-top:8px">Si ves un error CORS (Access-Control-Allow-Origin), sirve los archivos desde el mismo origen o configura el servidor para permitir CORS.</div>
       </div>`;
@@ -440,14 +440,14 @@ function renderAbout() {
         </a>
       </div>
       <p class="meta about-contact">${t("location")}: ${escapeHtml(
-    (data.i18n &&
-      data.i18n[currentLang] &&
-      data.i18n[currentLang].contact &&
-      data.i18n[currentLang].contact.location) ||
-      data.contact.location
-  )} <span class="sep">·</span> <a class="btn" href="mailto:${
-    data.contact.email
-  }">${t("contactButton")}</a></p>
+        (data.i18n &&
+          data.i18n[currentLang] &&
+          data.i18n[currentLang].contact &&
+          data.i18n[currentLang].contact.location) ||
+          data.contact.location,
+      )} <span class="sep">·</span> <a class="btn" href="mailto:${
+        data.contact.email
+      }">${t("contactButton")}</a></p>
       ${
         {
           es: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
@@ -459,8 +459,8 @@ function renderAbout() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
           en: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Languages</h3>\n<div class='languages'>${(data.i18n &&
@@ -472,8 +472,8 @@ function renderAbout() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
           pt: `<h3 class='section-title' style='margin-top:12px;font-size:1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
@@ -485,8 +485,8 @@ function renderAbout() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
         }[currentLang]
@@ -531,8 +531,8 @@ function renderExperience() {
           <li>
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
               <div><strong>${escapeHtml(role)}</strong> — ${escapeHtml(
-              company
-            )}</div>
+                company,
+              )}</div>
               <div class="meta">${escapeHtml(period)}</div>
             </div>
             <div class="meta">${escapeHtml(desc)}</div>
@@ -581,7 +581,7 @@ function renderAboutMe() {
       <h2 class="section-title">${t("section.aboutme")}</h2>
       
       <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
-        "section.education"
+        "section.education",
       )}</h3>
       <ul class="list">
         ${data.education
@@ -591,16 +591,16 @@ function renderAboutMe() {
             const school = led.school || ed.school;
             const period = ed.period;
             return `<li><strong>${escapeHtml(
-              degree
+              degree,
             )}</strong><div class="meta">${escapeHtml(school)} — ${escapeHtml(
-              period
+              period,
             )}</div></li>`;
           })
           .join("")}
       </ul>
       
       <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
-        "section.skills"
+        "section.skills",
       )}</h3>
       <div class="chips">${(data.i18n &&
       data.i18n[currentLang] &&
@@ -622,8 +622,8 @@ function renderAboutMe() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
           en: `<h3 class='section-title' style='margin-top:24px;font-size:1.1rem'>Languages</h3>\n<div class='languages'>${(data.i18n &&
@@ -635,8 +635,8 @@ function renderAboutMe() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
           pt: `<h3 class='section-title' style='margin-top:24px;font-size:1.1rem'>Idiomas</h3>\n<div class='languages'>${(data.i18n &&
@@ -648,27 +648,28 @@ function renderAboutMe() {
             .map(
               (l) =>
                 `<div class='language'><div class='name'>${escapeHtml(
-                  l.name
-                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`
+                  l.name,
+                )}</div><div class='level'>${escapeHtml(l.level)}</div></div>`,
             )
             .join("")}</div>`,
         }[currentLang]
       }
       
       <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">${t(
-        "section.contact"
+        "section.contact",
       )}</h3>
       <p class="meta">${t("email")}: <a href="mailto:${
-    data.contact.email
-  }">${escapeHtml(data.contact.email)}</a></p>
+        data.contact.email
+      }">${escapeHtml(data.contact.email)}</a></p>
       <p class="meta">${t("phone")}: ${escapeHtml(data.contact.phone)}</p>
       <p class="meta">${t("location")}: ${escapeHtml(
-    (data.i18n &&
-      data.i18n[currentLang] &&
-      data.i18n[currentLang].contact &&
-      data.i18n[currentLang].contact.location) ||
-      data.contact.location
-  )}</p>
+        (data.i18n &&
+          data.i18n[currentLang] &&
+          data.i18n[currentLang].contact &&
+          data.i18n[currentLang].contact.location) ||
+          data.contact.location,
+      )}</p>
+      <p class="meta">GitHub: <a href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer">miguelquesadamartinez</a></p>
     </section>
   `);
 }
