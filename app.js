@@ -350,7 +350,7 @@ function localizedEntry(baseArrayName, index) {
 
 async function loadData() {
   try {
-    const res = await fetch("data.json?version=1.9");
+    const res = await fetch("data.json?version=2.1");
     data = await res.json();
     loading && loading.remove();
     // insert/update JSON-LD Person schema using loaded data
@@ -731,7 +731,15 @@ function renderDrone() {
       }
       ${(d.intro || []).map((p) => `<p>${escapeHtml(p)}</p>`).join("")}
       <div class="drone-jumpnav">
-        ${["architecture", "how", "challenges", "status", "stl", "questions"]
+        ${[
+          "architecture",
+          "how",
+          "rpi",
+          "challenges",
+          "status",
+          "stl",
+          "questions",
+        ]
           .filter((k) => nav[k])
           .map(
             (k) =>
@@ -787,6 +795,34 @@ function renderDrone() {
           .map((s) => `<li>${escapeHtml(s)}</li>`)
           .join("")}
       </ol>
+    </section>`
+        : ""
+    }
+
+    ${
+      d.rpi_title && (d.rpi_groups || []).length
+        ? `
+    <section class="card" id="drone-rpi">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.rpi_title,
+      )}</h3>
+      ${d.rpi_intro ? `<p class="meta" style="margin-bottom:12px">${escapeHtml(d.rpi_intro)}</p>` : ""}
+      ${d.rpi_groups
+        .map(
+          (g, i) => `
+      <h4 class="drone-subhead"${i ? ' style="margin-top:16px"' : ""}>${escapeHtml(
+        g.title,
+      )}</h4>
+      <ul class="list">${(g.items || [])
+        .map((it) => `<li>${escapeHtml(it)}</li>`)
+        .join("")}</ul>
+      ${
+        g.code
+          ? `<pre class="code-block"><code>${escapeHtml(g.code)}</code></pre>`
+          : ""
+      }`,
+        )
+        .join("")}
     </section>`
         : ""
     }

@@ -142,6 +142,7 @@
     "nav": {
       "architecture": "Arquitectura",
       "how": "Cómo funciona",
+      "rpi": "Configuración de la RPi",
       "challenges": "Retos técnicos",
       "status": "Estado",
       "stl": "Piezas 3D",
@@ -178,6 +179,65 @@
       "En paralelo, comando_server.py expone una API (FastAPI) con los controles de vuelo: despegar, aterrizar, moverse, volver a casa o parar de emergencia.",
       "Ese servidor traduce cada orden a MAVLink y se la manda al Pixhawk, que es quien de verdad controla los motores — la Raspberry Pi nunca vuela el dron directamente, solo le dice qué hacer.",
       "Un watchdog corta el vuelo y fuerza el regreso a casa si la app deja de responder más de 5 segundos, como red de seguridad."
+    ],
+    "rpi_title": "Configuración de la Raspberry Pi",
+    "rpi_intro": "La Raspberry Pi es el cerebro de a bordo: habla con el Pixhawk por un lado y con la app móvil por el otro. Así está configurada ahora mismo:",
+    "rpi_groups": [
+      {
+        "title": "Sistema y arranque",
+        "items": [
+          "Raspberry Pi OS (64 bits) sobre una Raspberry Pi 4 Model B",
+          "El zócalo de la tarjeta microSD tiene una avería física: hace contacto con la carcasa puesta (que presiona la tarjeta) pero lo pierde sin ella, que es como iría montada en el dron",
+          "Solución en marcha: arrancar desde un USB en vez de desde la microSD, para evitar el zócalo roto del todo"
+        ],
+        "code": "sudo apt update && sudo apt upgrade -y\n\n# permisos para acceder a la cámara y al puerto serie sin sudo\nsudo usermod -a -G video,dialout $USER\n\nsudo reboot"
+      },
+      {
+        "title": "Telemetría con el Pixhawk",
+        "items": [
+          "Conectada al puerto TELEM2 del Pixhawk mediante el UART de hardware de la Raspberry Pi",
+          "921600 baudios en ambos extremos (antes estaban mal puestos a 115200)",
+          "UART habilitado (enable_uart=1) y el Bluetooth integrado desactivado (dtoverlay=disable-bt) para liberar el UART de hardware completo, sin compartirlo con la consola serie",
+          "Conexión verificada con un heartbeat MAVLink real y estable, leído con pymavlink"
+        ],
+        "code": "# /boot/config.txt — al final del archivo\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — quitar \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# tras reiniciar, comprobar que el puerto existe:\nls /dev/serial0"
+      },
+      {
+        "title": "Servidor de comandos (comando_server.py)",
+        "items": [
+          "Desplegado en ~/Documents/_Codes/drone-env, sincronizado por git",
+          "FastAPI + dronekit/pymavlink, escuchando en el puerto 8000",
+          "Configuración en un archivo .env (copiado de .env.example) — sin él, el servidor se conectaba por defecto a un simulador (SITL) en vez de al Pixhawk real",
+          "Watchdog interno: si no recibe un /ping de la app en 5 segundos, fuerza la vuelta a casa como red de seguridad",
+          "Pendiente: montarlo también como servicio systemd para que arranque solo tras un reinicio"
+        ],
+        "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca en 0.0.0.0:8000"
+      },
+      {
+        "title": "Cámara y detección de personas",
+        "items": [
+          "deteccion_personas_ai.py corre la inferencia de IA directamente en el chip Sony IMX500 de la cámara, sin cargar la CPU de la Raspberry Pi",
+          "Publica el vídeo por ffmpeg → RTSP → MediaMTX → HLS hacia la app",
+          "Intervalo de keyframe de ffmpeg fijado a 1 segundo (-g, -keyint_min y -sc_threshold en 0) para mantener la latencia en vivo baja"
+        ],
+        "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # comprobar que la cámara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo IA que usa deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+      },
+      {
+        "title": "Servicios systemd (arrancan solos con la Raspberry Pi)",
+        "items": [
+          "mediamtx.service — el servidor MediaMTX que recibe el RTSP y lo sirve como HLS a la app",
+          "drone-camera.service — corre deteccion_personas_ai.py, que a su vez lanza ffmpeg; depende de mediamtx.service (After / Requires) para no arrancar antes de tiempo",
+          "Restart=on-failure: si el proceso se cae, systemd lo reinicia solo a los 2 segundos"
+        ],
+        "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming de camara IA (deteccion de personas) hacia MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+      },
+      {
+        "title": "Red y acceso desde la app",
+        "items": [
+          "Todo por WiFi local — sin pasar por internet ni por ningún servidor externo",
+          "La IP de la Raspberry Pi cambia según la casa (Barcelona o Segur); la app móvil centraliza esa IP en un único archivo de configuración para no tocar el código cada vez"
+        ]
+      }
     ],
     "challenges_title": "Retos técnicos que me ha costado resolver",
     "challenges_intro": "Tres de los bugs más tercos del proyecto, y cómo llegué al fondo de cada uno:",
@@ -353,6 +413,7 @@
         "nav": {
           "architecture": "Architecture",
           "how": "How it works",
+          "rpi": "Raspberry Pi setup",
           "challenges": "Technical challenges",
           "status": "Status",
           "stl": "3D parts",
@@ -389,6 +450,65 @@
           "In parallel, comando_server.py exposes a FastAPI with the flight controls: takeoff, land, move, return-to-home or emergency stop.",
           "That server translates each command into MAVLink and sends it to the Pixhawk, which is the one actually flying the motors — the Raspberry Pi never flies the drone directly, it only tells it what to do.",
           "A watchdog cuts the flight short and forces a return-to-home if the app stops responding for more than 5 seconds, as a safety net."
+        ],
+        "rpi_title": "Raspberry Pi setup",
+        "rpi_intro": "The Raspberry Pi is the onboard brain: it talks to the Pixhawk on one side and to the mobile app on the other. Here's how it's set up right now:",
+        "rpi_groups": [
+          {
+            "title": "OS and boot",
+            "items": [
+              "Raspberry Pi OS (64-bit) on a Raspberry Pi 4 Model B",
+              "The microSD card socket has a physical fault: it makes contact with the case on (which presses the card in place) but loses it without the case, which is how it will sit inside the drone",
+              "Fix in progress: boot from a USB drive instead of the microSD card, to avoid the broken socket entirely"
+            ],
+            "code": "sudo apt update && sudo apt upgrade -y\n\n# permissions to access the camera and serial port without sudo\nsudo usermod -a -G video,dialout $USER\n\nsudo reboot"
+          },
+          {
+            "title": "Telemetry with the Pixhawk",
+            "items": [
+              "Connected to the Pixhawk's TELEM2 port through the Raspberry Pi's hardware UART",
+              "921600 baud on both ends (it used to be wrongly set to 115200)",
+              "UART enabled (enable_uart=1) and the onboard Bluetooth disabled (dtoverlay=disable-bt) to free up the full hardware UART instead of sharing it with the serial console",
+              "Connection verified with a real, stable MAVLink heartbeat read via pymavlink"
+            ],
+            "code": "# /boot/config.txt — at the end of the file\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — remove \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# after rebooting, confirm the port exists:\nls /dev/serial0"
+          },
+          {
+            "title": "Command server (comando_server.py)",
+            "items": [
+              "Deployed at ~/Documents/_Codes/drone-env, kept in sync via git",
+              "FastAPI + dronekit/pymavlink, listening on port 8000",
+              "Configured through a .env file (copied from .env.example) — without it, the server defaulted to a simulator (SITL) instead of the real Pixhawk",
+              "Built-in watchdog: forces a return-to-home if it doesn't get a /ping from the app within 5 seconds, as a safety net",
+              "Still to do: also set it up as a systemd service so it starts automatically after a reboot"
+            ],
+            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copied from .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # starts on 0.0.0.0:8000"
+          },
+          {
+            "title": "Camera and person detection",
+            "items": [
+              "deteccion_personas_ai.py runs AI inference directly on the camera's Sony IMX500 chip, with no load on the Raspberry Pi's CPU",
+              "Publishes video through ffmpeg → RTSP → MediaMTX → HLS to the app",
+              "ffmpeg's keyframe interval fixed at 1 second (-g, -keyint_min and -sc_threshold set to 0) to keep live latency low"
+            ],
+            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirm the camera responds\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# AI model used by deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+          },
+          {
+            "title": "Systemd services (start automatically with the Raspberry Pi)",
+            "items": [
+              "mediamtx.service — the MediaMTX server that receives the RTSP feed and serves it as HLS to the app",
+              "drone-camera.service — runs deteccion_personas_ai.py, which in turn launches ffmpeg; it depends on mediamtx.service (After / Requires) so it never starts too early",
+              "Restart=on-failure: if the process crashes, systemd restarts it after 2 seconds on its own"
+            ],
+            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=AI camera streaming (person detection) to MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+          },
+          {
+            "title": "Network and access from the app",
+            "items": [
+              "Everything over local WiFi — no internet, no external server involved",
+              "The Raspberry Pi's IP changes depending on the house (Barcelona or Segur); the mobile app centralizes that IP in a single config file so the code never has to change"
+            ]
+          }
         ],
         "challenges_title": "Technical challenges I've had to solve",
         "challenges_intro": "Three of the most stubborn bugs on this project, and how I got to the bottom of each one:",
@@ -564,6 +684,7 @@
         "nav": {
           "architecture": "Arquitetura",
           "how": "Como funciona",
+          "rpi": "Configuração da RPi",
           "challenges": "Desafios técnicos",
           "status": "Estado",
           "stl": "Peças 3D",
@@ -600,6 +721,65 @@
           "Em paralelo, o comando_server.py expõe uma API (FastAPI) com os controlos de voo: descolar, aterrar, mover, voltar a casa ou parar de emergência.",
           "Esse servidor traduz cada ordem para MAVLink e envia-a ao Pixhawk, que é quem realmente controla os motores — a Raspberry Pi nunca pilota o drone diretamente, apenas lhe diz o que fazer.",
           "Um watchdog corta o voo e força o regresso a casa se a app deixar de responder durante mais de 5 segundos, como rede de segurança."
+        ],
+        "rpi_title": "Configuração da Raspberry Pi",
+        "rpi_intro": "A Raspberry Pi é o cérebro a bordo: fala com o Pixhawk de um lado e com a app móvel do outro. É assim que está configurada agora mesmo:",
+        "rpi_groups": [
+          {
+            "title": "Sistema e arranque",
+            "items": [
+              "Raspberry Pi OS (64 bits) numa Raspberry Pi 4 Model B",
+              "O encaixe do cartão microSD tem uma avaria física: faz contacto com a caixa posta (que pressiona o cartão) mas perde-o sem ela, que é como vai ficar montada no drone",
+              "Solução em curso: arrancar a partir de uma USB em vez do cartão microSD, para evitar totalmente o encaixe partido"
+            ],
+            "code": "sudo apt update && sudo apt upgrade -y\n\n# permissões para aceder à câmara e à porta série sem sudo\nsudo usermod -a -G video,dialout $USER\n\nsudo reboot"
+          },
+          {
+            "title": "Telemetria com o Pixhawk",
+            "items": [
+              "Ligada à porta TELEM2 do Pixhawk através do UART de hardware da Raspberry Pi",
+              "921600 baud em ambos os lados (antes estava mal configurado em 115200)",
+              "UART ativado (enable_uart=1) e o Bluetooth integrado desativado (dtoverlay=disable-bt) para libertar o UART de hardware completo, sem o partilhar com a consola série",
+              "Ligação confirmada com um heartbeat MAVLink real e estável, lido com pymavlink"
+            ],
+            "code": "# /boot/config.txt — no final do ficheiro\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — remover \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# depois de reiniciar, confirmar que a porta existe:\nls /dev/serial0"
+          },
+          {
+            "title": "Servidor de comandos (comando_server.py)",
+            "items": [
+              "Implementado em ~/Documents/_Codes/drone-env, sincronizado por git",
+              "FastAPI + dronekit/pymavlink, a escutar na porta 8000",
+              "Configuração num ficheiro .env (copiado de .env.example) — sem ele, o servidor ligava por defeito a um simulador (SITL) em vez do Pixhawk real",
+              "Watchdog interno: se não receber um /ping da app em 5 segundos, força o regresso a casa como rede de segurança",
+              "Por fazer: montá-lo também como serviço systemd para que arranque sozinho depois de um reinício"
+            ],
+            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca em 0.0.0.0:8000"
+          },
+          {
+            "title": "Câmara e deteção de pessoas",
+            "items": [
+              "O deteccion_personas_ai.py corre a inferência de IA diretamente no chip Sony IMX500 da câmara, sem sobrecarregar o CPU da Raspberry Pi",
+              "Publica o vídeo por ffmpeg → RTSP → MediaMTX → HLS para a app",
+              "Intervalo de keyframe do ffmpeg fixado em 1 segundo (-g, -keyint_min e -sc_threshold a 0) para manter a latência em direto baixa"
+            ],
+            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirmar que a câmara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo de IA usado pelo deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+          },
+          {
+            "title": "Serviços systemd (arrancam sozinhos com a Raspberry Pi)",
+            "items": [
+              "mediamtx.service — o servidor MediaMTX que recebe o RTSP e o serve como HLS para a app",
+              "drone-camera.service — corre o deteccion_personas_ai.py, que por sua vez lança o ffmpeg; depende do mediamtx.service (After / Requires) para nunca arrancar demasiado cedo",
+              "Restart=on-failure: se o processo cair, o systemd reinicia-o sozinho ao fim de 2 segundos"
+            ],
+            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming da camara IA (deteção de pessoas) para o MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+          },
+          {
+            "title": "Rede e acesso a partir da app",
+            "items": [
+              "Tudo por WiFi local — sem passar pela internet nem por nenhum servidor externo",
+              "O IP da Raspberry Pi muda consoante a casa (Barcelona ou Segur); a app móvel centraliza esse IP num único ficheiro de configuração para não ter de mexer no código sempre"
+            ]
+          }
         ],
         "challenges_title": "Desafios técnicos que me custou resolver",
         "challenges_intro": "Três dos bugs mais teimosos do projeto, e como cheguei ao fundo de cada um:",

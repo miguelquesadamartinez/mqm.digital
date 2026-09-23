@@ -872,4 +872,24 @@ p.status-empty {
   }
 }
 
+/* bloques de comandos / ficheros de configuración (sección RPi) */
+pre.code-block {
+  background: #1c2128;
+  color: #d4d8e0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 4px 0 4px;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+pre.code-block code {
+  font-family: inherit;
+  background: none;
+  color: inherit;
+}
+
 /* fin de styles.css */
