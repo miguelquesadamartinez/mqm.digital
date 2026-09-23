@@ -122,6 +122,120 @@
     { "name": "Portugués", "level": "Fluido" }
   ],
   "cover_letter": "**Soy un desarrollador FullStack sénior con más de 25 años de experiencia, apasionado por la tecnología y por trabajar con las personas.**\n\nMi trayectoria incluye también la dirección técnica y el liderazgo de proyectos en España y Brasil, lo que me ha dado una visión amplia, madura y adaptable del mundo del software.\n\n**Destaco por mi forma de trabajar**: resuelvo problemas complejos con calma, especialmente en situaciones críticas, y mantengo siempre un enfoque en la arquitectura limpia, la eficiencia del código y el rendimiento. Me integro con facilidad en los equipos, colaboro, escucho, ayudo y mantengo una actitud positiva incluso en los momentos difíciles.\n\nAdemás de mis habilidades técnicas, aporto una dimensión humana que valoro tanto como el código: responsabilidad, empatía, buena comunicación y capacidad para generar confianza y buen ambiente. Hablo español, catalán, inglés y portugués con fluidez, lo que me permite colaborar de manera natural en entornos multiculturales.\n\n**En resumen: soy un profesional sénior con valores, trato humano y un enfoque colaborativo, alguien con experiencia real y con quien resulta fácil y agradable trabajar.**",
+  "drone": {
+    "eyebrow": "Proyecto personal",
+    "title": "Dron autónomo con detección de personas por IA",
+    "summary": "Un quadcopter construido desde cero: controlador de vuelo Pixhawk con ArduCopter, una Raspberry Pi 4 como cerebro embarcado, una cámara de IA (Sony IMX500) que detecta personas en su propio chip, vídeo en vivo y control de vuelo completo desde una app móvil propia — todo sobre WiFi local, sin mando de radio tradicional ni servicios en la nube.",
+    "quick_facts": [
+      "Pixhawk + ArduCopter 4.6.3",
+      "Raspberry Pi 4",
+      "Cámara IA Sony IMX500",
+      "FastAPI + MAVLink",
+      "App propia en Expo / React Native",
+      "Frame propio impreso en 3D"
+    ],
+    "intro": [
+      "Es un proyecto personal para aprender de punta a punta: electrónica y montaje del hardware, firmware de vuelo (ArduCopter), inteligencia artificial embebida y desarrollo de software — un servidor en Python/FastAPI y una app móvil en React Native.",
+      "El objetivo final es un quadcopter controlado por completo desde el teléfono: vídeo en vivo con detección de personas en tiempo real, telemetría y controles de vuelo (despegar, aterrizar, moverse, volver a casa, parada de emergencia), todo hablando con el Pixhawk vía MAVLink — sin mando de radio tradicional de por medio, aunque se sumará uno como respaldo.",
+      "Esta página resume la arquitectura, el estado real de cada pieza y algunos de los problemas más difíciles de depurar que me he encontrado por el camino."
+    ],
+    "nav": {
+      "architecture": "Arquitectura",
+      "how": "Cómo funciona",
+      "challenges": "Retos técnicos",
+      "status": "Estado",
+      "stl": "Piezas 3D",
+      "questions": "Dudas abiertas"
+    },
+    "stack_title": "Arquitectura",
+    "hardware_title": "Hardware",
+    "hardware": [
+      "Controlador de vuelo Pixhawk 2.4.8 con firmware ArduCopter 4.6.3",
+      "Raspberry Pi 4 Model B como compañero de a bordo (companion computer)",
+      "Cámara Raspberry Pi AI (Sony IMX500) — inferencia de IA en el propio sensor",
+      "4× motores brushless A2212 1000KV + 4× ESC 30A + hélices de 10\"",
+      "Batería LiPo 3S 5000mAh + PDB Matek PDB-XT60 + UBEC dedicado 5V/5A para la Raspberry Pi",
+      "GPS u-blox NEO-M9N, pantalla OLED SSD1306, buzzer y botón de seguridad",
+      "Frame diseñado e impreso en 3D a medida (piezas STL más abajo)"
+    ],
+    "software_title": "Software",
+    "software": [
+      "comando_server.py — servidor FastAPI en la Raspberry Pi que habla con el Pixhawk por MAVLink (dronekit/pymavlink): despegar, aterrizar, movimiento, RTL, parada de emergencia, telemetría y logs en vivo",
+      "deteccion_personas_ai.py — captura vídeo con Picamera2 y corre un modelo SSD MobileNetV2 directamente en el chip IMX500 para detectar personas en tiempo real, dibuja los recuadros y publica el stream por RTSP/MediaMTX",
+      "dronecam-app — app móvil propia (Expo / React Native) con vídeo en vivo, telemetría, consola de logs y controles de vuelo, hablando por WiFi local con la Raspberry Pi"
+    ],
+    "repos_title": "Código en GitHub",
+    "repos": [
+      { "label": "drone-env — servidor de comandos y detección de personas (Raspberry Pi)", "url": "https://github.com/miguelquesadamartinez/drone-env" },
+      { "label": "dronecam-app — app móvil (Expo / React Native)", "url": "https://github.com/miguelquesadamartinez/dronecam-app" }
+    ],
+    "how_title": "Cómo funciona, de principio a fin",
+    "how_intro": "Desde que abro la app hasta que el dron se mueve, la información pasa por varias piezas que hablan entre sí en tiempo real:",
+    "how_steps": [
+      "La app móvil (dronecam-app) se conecta a la Raspberry Pi por WiFi local — sin pasar por internet ni por ningún servidor externo.",
+      "La cámara IMX500 captura vídeo continuamente; cada fotograma se analiza en el propio chip de la cámara, que ya lleva la inferencia de IA integrada, así que la Raspberry Pi no tiene que cargar con ese trabajo.",
+      "deteccion_personas_ai.py recoge esas detecciones, dibuja un recuadro verde sobre cada persona y envía el vídeo ya anotado a MediaMTX, que lo sirve como HLS hacia la app — todo con unos ~6 segundos de retraso.",
+      "En paralelo, comando_server.py expone una API (FastAPI) con los controles de vuelo: despegar, aterrizar, moverse, volver a casa o parar de emergencia.",
+      "Ese servidor traduce cada orden a MAVLink y se la manda al Pixhawk, que es quien de verdad controla los motores — la Raspberry Pi nunca vuela el dron directamente, solo le dice qué hacer.",
+      "Un watchdog corta el vuelo y fuerza el regreso a casa si la app deja de responder más de 5 segundos, como red de seguridad."
+    ],
+    "challenges_title": "Retos técnicos que me ha costado resolver",
+    "challenges_intro": "Tres de los bugs más tercos del proyecto, y cómo llegué al fondo de cada uno:",
+    "challenges": [
+      {
+        "title": "El retraso de vídeo se disparó a 2-3 minutos",
+        "problem": "Al migrar el streaming para que pasara por el chip de IA (de rpicam-vid a deteccion_personas_ai.py), el retraso del vídeo en la app pasó de unos segundos a ¡2-3 minutos!",
+        "cause": "Descarté primero el pipeline de vídeo y la propia app — reproduciendo el mismo RTSP en VLC tenía el mismo retraso, así que el problema estaba antes. La causa real: ffmpeg no fijaba el intervalo de keyframe, así que usaba uno por defecto de unos 25 segundos. MediaMTX necesita un keyframe para poder cerrar cada fragmento de vídeo (HLS), así que se veía obligado a esperar minutos antes de poder servir nada «en vivo».",
+        "solution": "Forzando un keyframe cada segundo (con -g, -keyint_min y -sc_threshold en ffmpeg) el retraso bajó de golpe a unos 6 segundos."
+      },
+      {
+        "title": "El recuadro de detección cubría casi toda la pantalla",
+        "problem": "Tras limpiar la detección para que solo marcara personas, el recuadro verde salía casi siempre estirado, cubriendo prácticamente todo el vídeo en vez de encajar sobre la persona.",
+        "cause": "Eran dos bugs encadenados: primero, estaba reescalando las coordenadas a mano sin tener en cuenta que el modelo de IA razona sobre un cuadrado de 320×320 píxeles, no sobre la resolución real de la cámara. Segundo, incluso usando la función oficial de conversión de coordenadas de picamera2, esta espera las coordenadas ya normalizadas entre 0 y 1, y el modelo las estaba devolviendo en píxeles de su propia entrada.",
+        "solution": "Apliqué la misma normalización que usa el ejemplo oficial de picamera2/IMX500 antes de convertir las coordenadas, y el recuadro empezó a encajar de verdad sobre la persona. (De propina: un intento de arreglo a medio camino intentó modificar una propiedad de solo lectura de la librería y tumbó el servicio en un bucle de reinicios — se vio enseguida en los logs de systemd y se revirtió al momento.)"
+      },
+      {
+        "title": "Sin telemetría entre el Pixhawk y la Raspberry Pi",
+        "problem": "La Raspberry Pi no conseguía establecer un heartbeat MAVLink estable con el Pixhawk por el puerto serie — cero bytes, o bytes corruptos.",
+        "cause": "Descarté uno a uno: puertos alternativos, baudios, configuración UART de la Raspberry Pi, orientación de los cables TX/RX, e incluso el propio hardware UART con pruebas de loopback. Al final, la causa era puramente física: el cable de GND se había salido de su cavidad en el conector JST-GH del Pixhawk.",
+        "solution": "Un cable nuevo, bien montado, y corregir además unos baudios mal configurados (estaban a 115200 en vez de 921600) resolvieron el bloqueo en una sola tarde."
+      }
+    ],
+    "status_title": "Estado del proyecto",
+    "status_note": "Actualizado el 23 de septiembre de 2026 — es un proyecto vivo que avanza en ratos libres.",
+    "status": [
+      { "name": "Telemetría Pixhawk ↔ Raspberry Pi", "pct": 100, "state": "ok", "note": "Resuelto: heartbeat MAVLink estable", "done": ["Descartadas primero las causas de software: reinicios, configuración UART, orientación de los cables TX/RX y el propio hardware UART (probado con loopback)", "Localizada la causa real: el cable de GND se había salido de su cavidad en el conector JST-GH", "Cable nuevo montado y probado", "Corregidos los baudios, que estaban mal a 115200 en vez de 921600", "Heartbeat MAVLink confirmado de forma estable con pymavlink", "Movido el puerto de la Raspberry Pi a TELEM2, dejando TELEM1 preparado para el futuro receptor de radio", "Confirmado que el servidor de comandos lleva días funcionando sin problemas contra la Pixhawk real"], "todo": [] },
+      { "name": "App móvil", "pct": 100, "state": "ok", "note": "Vídeo, telemetría y controles de vuelo funcionando", "done": ["Diagnosticada y resuelta una actualización automática de Expo Go que rompió la compatibilidad con el proyecto", "Revisado el código: ya implementa todos los controles (despegar, mover, motor test, telemetría, logs, scripts) contra los endpoints reales", "Creado un archivo de configuración central para la IP de la Raspberry Pi, que cambia según la casa", "Confirmada la conexión real app↔servidor: vídeo de la cámara visible y botones llegando a la Raspberry Pi", "Añadido el control de altitud (subir/bajar) al mando en pantalla", "Consola de logs ordenada (más reciente arriba) y limitada a las últimas 10 líneas"], "todo": ["Anotar la IP de la Raspberry Pi cuando esté en Barcelona (no urgente)"] },
+      { "name": "Streaming de vídeo", "pct": 90, "state": "ok", "note": "Vídeo con detección de personas en vivo, ~6s de latencia", "done": ["Pipeline completo construido y verificado en producción", "Montado como servicios systemd persistentes tras reinicio", "Migrado el streaming para incluir la detección de personas en el propio chip IMX500", "Diagnosticado y corregido un bug grave de latencia (2-3 minutos) causado por un intervalo de keyframe de ffmpeg sin fijar", "Confirmada la bajada de latencia a unos 6 segundos (a veces 3s) tras el arreglo"], "todo": ["Decidir si bajar aún más el keyframe, aceptar los ~6s actuales, o migrar a WebRTC más adelante"] },
+      { "name": "Servidor de comandos", "pct": 85, "state": "ok", "note": "Desplegado y conectado a la Pixhawk real", "done": ["Desplegado en la Raspberry Pi y conectado de verdad a la Pixhawk real", "Implementados los endpoints de despegar, aterrizar, RTL, mover (con control de altitud), parada de emergencia, motor test, telemetría y logs en vivo", "Añadido un watchdog que fuerza la vuelta a casa si no recibe señal de la app en 5 segundos", "Mejorado el registro: ahora también quedan en el log las órdenes normales de vuelo, no solo los scripts lanzados"], "todo": ["Montarlo como servicio systemd para que persista tras reinicios", "Los avisos PreArm actuales (por falta de mando y receptor) se resolverán solos en cuanto esa pieza esté comprada"] },
+      { "name": "Frame", "pct": 83, "state": "warn", "note": "Piezas impresas y validadas; falta ajustar el soporte del GPS", "done": ["Patas de aterrizaje — validadas", "Alas / brazos — validados", "Tapa superior — validada", "Base — validada", "Separadores — validados"], "todo": ["Comprobar cómo encajará el soporte del GPS"] },
+      { "name": "Alimentación de la Raspberry Pi", "pct": 80, "state": "warn", "note": "Arquitectura decidida, falta comprar el UBEC y el condensador", "done": ["Identificado que el BEC del PDB no da abasto para la Raspberry Pi", "Decidida la arquitectura: UBEC dedicado más condensador", "Resuelto el conflicto de voltaje entre batería y motor/ESC, bajando de 4S a 3S para respetar la especificación del ESC actual"], "todo": ["Comprar la batería 3S 5000mAh, el UBEC 5V/5A (2S–6S) y el condensador de 220–470µF", "Montar el UBEC y probarlo en banco antes de volar (ver Ensamblaje)"] },
+      { "name": "Detección de personas (IA)", "pct": 80, "state": "warn", "note": "Funciona; afinando la estabilidad del recuadro", "done": ["Subido el umbral de confianza para reducir falsos positivos", "Quitado el dibujo de recuadros para objetos que no son personas", "Corregido el escalado del recuadro con la función oficial de conversión de coordenadas de picamera2", "Corregida la normalización de las coordenadas antes de esa conversión", "Confirmado que el recuadro ya encaja bien sobre la persona en la mayoría de los casos", "Diseñada una pieza de soporte para montar la cámara fija y aislar si lo que queda es vibración o el movimiento de sujetarla a mano"], "todo": ["Imprimir el soporte de cámara", "Probar con la cámara fija sobre una mesa, en un espacio más abierto, y confirmar si eso resuelve la inconsistencia que queda"] },
+      { "name": "Receptor y mando de radio", "pct": 25, "state": "crit", "note": "Elegido (RadioMaster Zorro + ELRS); pendiente de compra", "done": ["Elegido el mando: RadioMaster Zorro negro, con protocolo ExpressLRS (ELRS)", "Dejado preparado el puerto de la Pixhawk donde irá conectado el receptor"], "todo": ["Comprar el mando y un receptor ELRS a juego", "Actualizar ambos a la misma versión de firmware antes de emparejarlos", "Emparejarlos (bind)", "Cablear el receptor a la Pixhawk", "Configurar el failsafe del receptor en modo «sin pulsos»", "Calibrar la radio y asignar los canales de vuelo", "Configurar el failsafe de pérdida de señal en ArduCopter", "Comprobar que el aviso de «receptor no encontrado» desaparece y probar a armar sin hélices"] },
+      { "name": "Zócalo microSD de la Raspberry Pi", "pct": 25, "state": "crit", "note": "Avería de hardware detectada; trabajo en pausa", "done": ["Diagnosticado el síntoma exacto: la tarjeta funciona con la carcasa puesta, pero pierde contacto sin ella"], "todo": ["Decidir entre: arrancar por USB (evita el zócalo roto del todo), un apaño mecánico con espuma o cinta (rápido pero poco fiable con las vibraciones de vuelo), o cambiar la Raspberry Pi por otra", "Trabajo en pausa hasta tomar esa decisión"] },
+      { "name": "Soldadura, conexión y ensamblaje final", "pct": 0, "state": "warn", "note": "Cableado y montaje físico definitivo, por hacer", "done": [], "todo": ["Soldar el PDB", "Hacer extensiones a los cables de los ESC para que lleguen a los motores", "Conectar el GPS y la pantalla OLED a la Pixhawk / Raspberry Pi", "Fijar los ESCs a la tapa del frame", "Montar en la tapa el buzzer, el PDB, la cámara y el OLED", "Montar el UBEC y probar en banco (motores al 15%) que la Raspberry Pi no se resetea, antes de volar"] }
+    ],
+    "open_questions_title": "Sobre qué sigo decidiendo",
+    "open_questions": [
+      "Latencia de streaming: ¿quedarme en los ~6s actuales, apretar más, o migrar a WebRTC más adelante?",
+      "Dónde ubicar la batería y el módulo de potencia 3DR dentro del frame",
+      "Marca/modelo exactos de algunos componentes, pendientes de anotar"
+    ],
+    "stl_title": "Piezas del frame (impresión 3D)",
+    "stl_intro": "El frame es un diseño propio, dibujado a medida e iterado más de una decena de veces hasta que todos los componentes encajaban bien. Estos son los STL de las piezas actuales, listos para imprimir:",
+    "stl_download_all": "Descargar todas (.zip)",
+    "stl_files": [
+      { "file": "stl/ala-v11.stl", "label": "Ala / brazo del frame" },
+      { "file": "stl/base-v2.stl", "label": "Base del frame" },
+      { "file": "stl/cover-v19.stl", "label": "Tapa superior (aloja buzzer, PDB, cámara y OLED)" },
+      { "file": "stl/patas-v5.stl", "label": "Patas de aterrizaje" },
+      { "file": "stl/separador-v2.stl", "label": "Separador" },
+      { "file": "stl/soporte-v4.stl", "label": "Soporte general" },
+      { "file": "stl/rp-ai-camera-case-front.stl", "label": "Carcasa de la cámara IA" }
+    ],
+    "closing_title": "Por qué me embarqué en esto",
+    "closing": "Llevo más de 25 años como desarrollador, pero este proyecto me saca de mi zona de confort de una forma muy sana: aquí un bug no se queda solo en el código, puede estar en una soldadura floja, en un cable mal encajado, o en cómo un chip de IA normaliza sus coordenadas. Me obliga a razonar por capas — hardware, firmware, backend y app — y esa mezcla de electrónica, IA embebida y desarrollo de software es exactamente lo que más disfruto aprendiendo."
+  },
   "i18n": {
     "en": {
       "name": "Miguel Quesada Martínez",
@@ -218,7 +332,121 @@
         { "name": "English", "level": "Fluent" },
         { "name": "Portuguese", "level": "Fluent" }
       ],
-      "cover_letter": "**I am a senior FullStack developer with over 25 years of experience, passionate about technology and working with people.** Throughout my career I have developed solutions in multiple languages and environments (PHP, C#, JavaScript), managed databases such as SQL Server, MySQL and PostgreSQL, and administered Linux and Windows servers.\n\nMy career also includes technical management and project leadership in Spain and Brazil, which has given me a broad, mature and adaptable view of the software world.\n\n**I stand out for my way of working:** I solve complex problems calmly, especially in critical situations, and I always keep a focus on clean architecture, code efficiency and performance. I integrate easily into teams, collaborate, listen, help and maintain a positive attitude even in difficult moments.\n\nIn addition to my technical skills, I bring a human dimension that I value as much as code: responsibility, empathy, good communication and the ability to build trust and a good environment. I speak Spanish, Catalan, English and Portuguese fluently, which allows me to collaborate naturally in multicultural settings.\n\n**In short: I am a senior professional with values, a human approach and a collaborative mindset, someone with real experience and who is easy and pleasant to work with.**"
+      "cover_letter": "**I am a senior FullStack developer with over 25 years of experience, passionate about technology and working with people.** Throughout my career I have developed solutions in multiple languages and environments (PHP, C#, JavaScript), managed databases such as SQL Server, MySQL and PostgreSQL, and administered Linux and Windows servers.\n\nMy career also includes technical management and project leadership in Spain and Brazil, which has given me a broad, mature and adaptable view of the software world.\n\n**I stand out for my way of working:** I solve complex problems calmly, especially in critical situations, and I always keep a focus on clean architecture, code efficiency and performance. I integrate easily into teams, collaborate, listen, help and maintain a positive attitude even in difficult moments.\n\nIn addition to my technical skills, I bring a human dimension that I value as much as code: responsibility, empathy, good communication and the ability to build trust and a good environment. I speak Spanish, Catalan, English and Portuguese fluently, which allows me to collaborate naturally in multicultural settings.\n\n**In short: I am a senior professional with values, a human approach and a collaborative mindset, someone with real experience and who is easy and pleasant to work with.**",
+      "drone": {
+        "eyebrow": "Personal project",
+        "title": "Autonomous drone with AI person detection",
+        "summary": "A quadcopter built from scratch: a Pixhawk flight controller running ArduCopter, a Raspberry Pi 4 as the onboard companion computer, an AI camera (Sony IMX500) that detects people on its own chip, live video and full flight control from a custom mobile app — all over local WiFi, with no traditional radio transmitter and no cloud services.",
+        "quick_facts": [
+          "Pixhawk + ArduCopter 4.6.3",
+          "Raspberry Pi 4",
+          "Sony IMX500 AI camera",
+          "FastAPI + MAVLink",
+          "Custom Expo / React Native app",
+          "Custom 3D-printed frame"
+        ],
+        "intro": [
+          "A personal project to learn end to end: hardware electronics and assembly, flight firmware (ArduCopter), embedded AI, and software development — a Python/FastAPI server and a React Native mobile app.",
+          "The end goal is a quadcopter fully controlled from the phone: live video with real-time person detection, telemetry, and flight controls (takeoff, land, move, return-to-home, emergency stop), all talking to the Pixhawk over MAVLink — no traditional radio transmitter in the loop, though one will be added as a backup.",
+          "This page walks through the architecture, the real status of every piece, and a few of the hardest bugs I've had to track down along the way."
+        ],
+        "nav": {
+          "architecture": "Architecture",
+          "how": "How it works",
+          "challenges": "Technical challenges",
+          "status": "Status",
+          "stl": "3D parts",
+          "questions": "Open questions"
+        },
+        "stack_title": "Architecture",
+        "hardware_title": "Hardware",
+        "hardware": [
+          "Pixhawk 2.4.8 flight controller running ArduCopter 4.6.3 firmware",
+          "Raspberry Pi 4 Model B as the onboard companion computer",
+          "Raspberry Pi AI Camera (Sony IMX500) — AI inference on the sensor itself",
+          "4× A2212 1000KV brushless motors + 4× 30A ESCs + 10\" propellers",
+          "3S 5000mAh LiPo battery + Matek PDB-XT60 power distribution board + dedicated 5V/5A UBEC for the Raspberry Pi",
+          "u-blox NEO-M9N GPS, SSD1306 OLED display, buzzer and safety switch",
+          "Custom-designed, 3D-printed frame (STL files below)"
+        ],
+        "software_title": "Software",
+        "software": [
+          "comando_server.py — a FastAPI server on the Raspberry Pi that talks to the Pixhawk over MAVLink (dronekit/pymavlink): takeoff, land, movement, RTL, emergency stop, live telemetry and logs",
+          "deteccion_personas_ai.py — captures video with Picamera2 and runs an SSD MobileNetV2 model directly on the IMX500 chip to detect people in real time, draws the bounding boxes and publishes the stream over RTSP/MediaMTX",
+          "dronecam-app — a custom mobile app (Expo / React Native) with live video, telemetry, a log console and flight controls, talking to the Raspberry Pi over local WiFi"
+        ],
+        "repos_title": "Code on GitHub",
+        "repos": [
+          { "label": "drone-env — command server and person detection (Raspberry Pi)", "url": "https://github.com/miguelquesadamartinez/drone-env" },
+          { "label": "dronecam-app — mobile app (Expo / React Native)", "url": "https://github.com/miguelquesadamartinez/dronecam-app" }
+        ],
+        "how_title": "How it works, end to end",
+        "how_intro": "From opening the app to the drone actually moving, several pieces talk to each other in real time:",
+        "how_steps": [
+          "The mobile app (dronecam-app) connects to the Raspberry Pi over local WiFi — no internet, no external server involved.",
+          "The IMX500 camera captures video continuously; each frame is analyzed on the camera's own chip, which already runs the AI inference, so the Raspberry Pi never has to carry that load.",
+          "deteccion_personas_ai.py collects those detections, draws a green box around each person, and sends the annotated video to MediaMTX, which serves it as HLS to the app — all with about 6 seconds of delay.",
+          "In parallel, comando_server.py exposes a FastAPI with the flight controls: takeoff, land, move, return-to-home or emergency stop.",
+          "That server translates each command into MAVLink and sends it to the Pixhawk, which is the one actually flying the motors — the Raspberry Pi never flies the drone directly, it only tells it what to do.",
+          "A watchdog cuts the flight short and forces a return-to-home if the app stops responding for more than 5 seconds, as a safety net."
+        ],
+        "challenges_title": "Technical challenges I've had to solve",
+        "challenges_intro": "Three of the most stubborn bugs on this project, and how I got to the bottom of each one:",
+        "challenges": [
+          {
+            "title": "Video delay spiked to 2-3 minutes",
+            "problem": "After moving streaming onto the AI chip (from rpicam-vid to deteccion_personas_ai.py), the video delay in the app jumped from a couple of seconds to 2-3 minutes.",
+            "cause": "I first ruled out the video pipeline and the app itself — playing the same RTSP stream directly in VLC showed the same delay, so the problem was upstream. The real cause: ffmpeg wasn't setting a keyframe interval, so it fell back to a default of roughly 25 seconds. MediaMTX needs a keyframe to close each HLS segment, so it had to wait minutes before it could serve anything close to 'live'.",
+            "solution": "Forcing a keyframe every second (ffmpeg's -g, -keyint_min and -sc_threshold flags) dropped the delay straight down to about 6 seconds."
+          },
+          {
+            "title": "The detection box covered almost the whole screen",
+            "problem": "After cleaning up detection to only flag people, the green box almost always came out stretched, covering nearly the entire video instead of fitting around the person.",
+            "cause": "It turned out to be two bugs stacked on top of each other: first, I was rescaling the coordinates by hand without accounting for the fact that the AI model reasons over a 320×320 square, not the camera's real resolution. Second, even using picamera2's official coordinate-conversion helper, it expects coordinates already normalized between 0 and 1, and the model was returning them in pixels of its own input instead.",
+            "solution": "Applying the same normalization used in the official picamera2/IMX500 example before converting the coordinates finally made the box fit the person properly. (Bonus bug: a mid-way fix attempt tried to reassign a read-only library property and crashed the service into a restart loop — spotted right away in the systemd logs and reverted immediately.)"
+          },
+          {
+            "title": "No telemetry between the Pixhawk and the Raspberry Pi",
+            "problem": "The Raspberry Pi couldn't get a stable MAVLink heartbeat from the Pixhawk over the serial port — either zero bytes or corrupted ones.",
+            "cause": "I ruled things out one by one: alternate ports, baud rates, the Raspberry Pi's UART configuration, TX/RX wire orientation, even the UART hardware itself with loopback tests. In the end the cause was purely physical: the GND wire had popped out of its cavity in the Pixhawk's JST-GH connector.",
+            "solution": "A new, properly seated cable, plus fixing a misconfigured baud rate (it was set to 115200 instead of 921600), solved the problem in a single afternoon."
+          }
+        ],
+        "status_title": "Project status",
+        "status_note": "Updated on September 23, 2026 — a living project that moves forward in spare time.",
+        "status": [
+          { "name": "Pixhawk ↔ Raspberry Pi telemetry", "pct": 100, "state": "ok", "note": "Solved: stable MAVLink heartbeat", "done": ["Ruled out software causes first: reboots, UART configuration, TX/RX wire orientation, and the UART hardware itself (tested with loopback)", "Found the real cause: the GND wire had popped out of its cavity in the JST-GH connector", "New cable seated and tested", "Fixed the baud rate, which was wrongly set to 115200 instead of 921600", "Stable MAVLink heartbeat confirmed with pymavlink", "Moved the Raspberry Pi's port to TELEM2, leaving TELEM1 ready for the future RC receiver", "Confirmed the command server has been running for days against the real Pixhawk without issues"], "todo": [] },
+          { "name": "Mobile app", "pct": 100, "state": "ok", "note": "Video, telemetry and flight controls working", "done": ["Diagnosed and fixed an automatic Expo Go update that broke compatibility with the project", "Reviewed the code: it already implements every control (takeoff, move, motor test, telemetry, logs, scripts) against the real endpoints", "Created a central config file for the Raspberry Pi's IP, which changes depending on the house", "Confirmed the real app↔server connection: camera video visible and button presses reaching the Raspberry Pi", "Added altitude control (up/down) to the on-screen D-pad", "Sorted the log console (newest first) and capped it to the last 10 lines"], "todo": ["Note down the Raspberry Pi's IP once it's set up in Barcelona (not urgent)"] },
+          { "name": "Video streaming", "pct": 90, "state": "ok", "note": "Live video with person detection, ~6s latency", "done": ["Full pipeline built and verified in production", "Set up as persistent systemd services that survive reboots", "Migrated streaming to include person detection on the IMX500 chip itself", "Diagnosed and fixed a serious latency bug (2-3 minutes) caused by an unfixed ffmpeg keyframe interval", "Confirmed latency dropped to about 6 seconds (sometimes 3s) after the fix"], "todo": ["Decide whether to lower the keyframe further, accept the current ~6s, or move to WebRTC later on"] },
+          { "name": "Command server", "pct": 85, "state": "ok", "note": "Deployed and connected to the real Pixhawk", "done": ["Deployed on the Raspberry Pi and genuinely connected to the real Pixhawk", "Implemented takeoff, land, RTL, move (with altitude control), emergency stop, motor test, telemetry and live log endpoints", "Added a watchdog that forces a return-to-home if it doesn't hear from the app for 5 seconds", "Improved logging so normal flight commands show up too, not just launched scripts"], "todo": ["Set it up as a systemd service so it survives reboots", "The current PreArm warnings (missing transmitter and receiver) will resolve themselves once that part is bought"] },
+          { "name": "Frame", "pct": 83, "state": "warn", "note": "Parts printed and validated; GPS mount still to fit", "done": ["Landing legs — validated", "Wings / arms — validated", "Top cover — validated", "Base — validated", "Spacers — validated"], "todo": ["Check how the GPS mount will fit"] },
+          { "name": "Raspberry Pi power supply", "pct": 80, "state": "warn", "note": "Architecture decided, still need to buy the UBEC and capacitor", "done": ["Identified that the PDB's built-in BEC can't keep up with the Raspberry Pi", "Decided on the architecture: a dedicated UBEC plus a capacitor", "Resolved the voltage conflict between the battery and the motor/ESC by dropping from 4S to 3S, to stay within the current ESC's spec"], "todo": ["Buy the 3S 5000mAh battery, the 5V/5A UBEC (2S–6S) and the 220–470µF capacitor", "Mount the UBEC and bench-test it before flying (see Assembly)"] },
+          { "name": "Person detection (AI)", "pct": 80, "state": "warn", "note": "Working; fine-tuning bounding-box stability", "done": ["Raised the confidence threshold to cut down false positives", "Removed the bounding boxes for non-person objects", "Fixed the box scaling using picamera2's official coordinate-conversion helper", "Fixed the coordinate normalization that had to happen before that conversion", "Confirmed the box now fits the person correctly most of the time", "Designed a camera mount to test with a fixed camera and isolate whether what's left is vibration or hand movement"], "todo": ["Print the camera mount", "Test with the camera fixed on a table, in a more open space, and confirm whether that fixes the remaining inconsistency"] },
+          { "name": "RC receiver and transmitter", "pct": 25, "state": "crit", "note": "Chosen (RadioMaster Zorro + ELRS); still to be bought", "done": ["Chosen the transmitter: a black RadioMaster Zorro running ExpressLRS (ELRS)", "Prepared the Pixhawk port the receiver will connect to"], "todo": ["Buy the transmitter and a matching ELRS receiver", "Update both to the same firmware version before binding them", "Bind them", "Wire the receiver to the Pixhawk", "Set the receiver's failsafe to \"no pulses\"", "Calibrate the radio and assign the flight channels", "Configure ArduCopter's signal-loss failsafe", "Confirm the \"receiver not found\" warning clears and try arming without propellers"] },
+          { "name": "Raspberry Pi microSD socket", "pct": 25, "state": "crit", "note": "Hardware fault found; work paused", "done": ["Diagnosed the exact symptom: the card works with the case on, but loses contact without it"], "todo": ["Decide between: booting from USB (avoids the broken socket entirely), a mechanical fix with foam or tape (quick but unreliable with flight vibration), or swapping the Raspberry Pi for another one", "Work is paused until that decision is made"] },
+          { "name": "Soldering, wiring and final assembly", "pct": 0, "state": "warn", "note": "Final wiring and physical assembly still to do", "done": [], "todo": ["Solder the PDB", "Make extensions for the ESC-to-motor wires", "Wire the GPS and OLED display to the Pixhawk / Raspberry Pi", "Fix the ESCs to the frame's top cover", "Mount the buzzer, PDB, camera and OLED on the top cover", "Mount the UBEC and bench-test (motors at 15%) that the Raspberry Pi doesn't reset, before flying"] }
+        ],
+        "open_questions_title": "Still deciding",
+        "open_questions": [
+          "Streaming latency: stay at the current ~6s, push it lower, or move to WebRTC later on?",
+          "Where to place the battery and the 3DR power module inside the frame",
+          "Exact brand/model of a few components, still to be noted down"
+        ],
+        "stl_title": "Frame parts (3D printing)",
+        "stl_intro": "The frame is a custom design, drawn from scratch and iterated through more than a dozen versions until every component fit. These are the STL files for the current parts, ready to print:",
+        "stl_download_all": "Download all (.zip)",
+        "stl_files": [
+          { "file": "stl/ala-v11.stl", "label": "Frame wing / arm" },
+          { "file": "stl/base-v2.stl", "label": "Frame base" },
+          { "file": "stl/cover-v19.stl", "label": "Top cover (houses buzzer, PDB, camera and OLED)" },
+          { "file": "stl/patas-v5.stl", "label": "Landing legs" },
+          { "file": "stl/separador-v2.stl", "label": "Spacer" },
+          { "file": "stl/soporte-v4.stl", "label": "General mount" },
+          { "file": "stl/rp-ai-camera-case-front.stl", "label": "AI camera case" }
+        ],
+        "closing_title": "Why I took this on",
+        "closing": "I've been a developer for over 25 years, but this project pushes me out of my comfort zone in a healthy way: here a bug doesn't just live in the code, it can be a loose solder joint, a badly seated cable, or how an AI chip normalizes its coordinates. It forces me to reason across layers — hardware, firmware, backend and app — and that mix of electronics, embedded AI and software development is exactly what I enjoy learning most."
+      }
     },
     "pt": {
       "name": "Miguel Quesada Martínez",
@@ -315,7 +543,121 @@
         { "name": "Inglês", "level": "Fluente" },
         { "name": "Português", "level": "Fluente" }
       ],
-      "cover_letter": "**Sou um desenvolvedor FullStack sénior com mais de 25 anos de experiência, apaixonado por tecnologia e por trabalhar com pessoas.** Ao longo da minha carreira desenvolvi soluções em múltiplas linguagens e ambientes (PHP, C#, JavaScript), administrei bases de dados como SQL Server, MySQL e PostgreSQL, e gerei servidores Linux e Windows.\n\nA minha trajetória inclui também direção técnica e liderança de projetos em Espanha e Brasil, o que me deu uma visão ampla, madura e adaptável do mundo do software.\n\n**Destaco-me pela minha forma de trabalhar:** resolvo problemas complexos com calma, especialmente em situações críticas, e mantenho sempre uma atenção na arquitetura limpa, eficiência do código e desempenho. Integro-me facilmente nas equipas, colaboro, escuto, ajudo e mantenho uma atitude positiva mesmo em momentos difíceis.\n\nPara além das minhas competências técnicas, trago uma dimensão humana que valorizo tanto como o código: responsabilidade, empatia, boa comunicação e capacidade para gerar confiança e um bom ambiente. Falo espanhol, catalão, inglês e português com fluência, o que me permite colaborar de forma natural em ambientes multiculturais.\n\n**Em resumo: sou um profissional sénior com valores, trato humano e uma abordagem colaborativa, alguém com experiência real e com quem é fácil e agradável trabalhar.**"
+      "cover_letter": "**Sou um desenvolvedor FullStack sénior com mais de 25 anos de experiência, apaixonado por tecnologia e por trabalhar com pessoas.** Ao longo da minha carreira desenvolvi soluções em múltiplas linguagens e ambientes (PHP, C#, JavaScript), administrei bases de dados como SQL Server, MySQL e PostgreSQL, e gerei servidores Linux e Windows.\n\nA minha trajetória inclui também direção técnica e liderança de projetos em Espanha e Brasil, o que me deu uma visão ampla, madura e adaptável do mundo do software.\n\n**Destaco-me pela minha forma de trabalhar:** resolvo problemas complexos com calma, especialmente em situações críticas, e mantenho sempre uma atenção na arquitetura limpa, eficiência do código e desempenho. Integro-me facilmente nas equipas, colaboro, escuto, ajudo e mantenho uma atitude positiva mesmo em momentos difíceis.\n\nPara além das minhas competências técnicas, trago uma dimensão humana que valorizo tanto como o código: responsabilidade, empatia, boa comunicação e capacidade para gerar confiança e um bom ambiente. Falo espanhol, catalão, inglês e português com fluência, o que me permite colaborar de forma natural em ambientes multiculturais.\n\n**Em resumo: sou um profissional sénior com valores, trato humano e uma abordagem colaborativa, alguém com experiência real e com quem é fácil e agradável trabalhar.**",
+      "drone": {
+        "eyebrow": "Projeto pessoal",
+        "title": "Drone autónomo com deteção de pessoas por IA",
+        "summary": "Um quadcopter construído do zero: um controlador de voo Pixhawk com ArduCopter, uma Raspberry Pi 4 como cérebro embarcado, uma câmara de IA (Sony IMX500) que deteta pessoas no próprio chip, vídeo em direto e controlo de voo completo a partir de uma app móvel própria — tudo por WiFi local, sem rádio-comando tradicional nem serviços na nuvem.",
+        "quick_facts": [
+          "Pixhawk + ArduCopter 4.6.3",
+          "Raspberry Pi 4",
+          "Câmara de IA Sony IMX500",
+          "FastAPI + MAVLink",
+          "App própria em Expo / React Native",
+          "Frame próprio impresso em 3D"
+        ],
+        "intro": [
+          "Um projeto pessoal para aprender de ponta a ponta: eletrónica e montagem do hardware, firmware de voo (ArduCopter), inteligência artificial embarcada e desenvolvimento de software — um servidor em Python/FastAPI e uma app móvel em React Native.",
+          "O objetivo final é um quadcopter totalmente controlado a partir do telemóvel: vídeo em direto com deteção de pessoas em tempo real, telemetria e controlos de voo (descolar, aterrar, mover, voltar a casa, paragem de emergência), tudo a comunicar com o Pixhawk via MAVLink — sem rádio-comando tradicional envolvido, embora venha a ser adicionado um como reserva.",
+          "Esta página resume a arquitetura, o estado real de cada peça e alguns dos bugs mais difíceis de depurar que encontrei pelo caminho."
+        ],
+        "nav": {
+          "architecture": "Arquitetura",
+          "how": "Como funciona",
+          "challenges": "Desafios técnicos",
+          "status": "Estado",
+          "stl": "Peças 3D",
+          "questions": "Dúvidas em aberto"
+        },
+        "stack_title": "Arquitetura",
+        "hardware_title": "Hardware",
+        "hardware": [
+          "Controlador de voo Pixhawk 2.4.8 com firmware ArduCopter 4.6.3",
+          "Raspberry Pi 4 Model B como computador de bordo (companion computer)",
+          "Câmara Raspberry Pi AI (Sony IMX500) — inferência de IA no próprio sensor",
+          "4× motores brushless A2212 1000KV + 4× ESC 30A + hélices de 10\"",
+          "Bateria LiPo 3S 5000mAh + PDB Matek PDB-XT60 + UBEC dedicado 5V/5A para a Raspberry Pi",
+          "GPS u-blox NEO-M9N, ecrã OLED SSD1306, buzzer e botão de segurança",
+          "Frame desenhado à medida e impresso em 3D (ficheiros STL mais abaixo)"
+        ],
+        "software_title": "Software",
+        "software": [
+          "comando_server.py — servidor FastAPI na Raspberry Pi que comunica com o Pixhawk por MAVLink (dronekit/pymavlink): descolar, aterrar, movimento, RTL, paragem de emergência, telemetria e logs em direto",
+          "deteccion_personas_ai.py — captura vídeo com Picamera2 e corre um modelo SSD MobileNetV2 diretamente no chip IMX500 para detetar pessoas em tempo real, desenha os retângulos e publica o stream por RTSP/MediaMTX",
+          "dronecam-app — app móvel própria (Expo / React Native) com vídeo em direto, telemetria, consola de logs e controlos de voo, a comunicar por WiFi local com a Raspberry Pi"
+        ],
+        "repos_title": "Código no GitHub",
+        "repos": [
+          { "label": "drone-env — servidor de comandos e deteção de pessoas (Raspberry Pi)", "url": "https://github.com/miguelquesadamartinez/drone-env" },
+          { "label": "dronecam-app — app móvel (Expo / React Native)", "url": "https://github.com/miguelquesadamartinez/dronecam-app" }
+        ],
+        "how_title": "Como funciona, do início ao fim",
+        "how_intro": "Desde que abro a app até o drone se mover, a informação passa por várias peças que comunicam entre si em tempo real:",
+        "how_steps": [
+          "A app móvel (dronecam-app) liga-se à Raspberry Pi por WiFi local — sem passar pela internet nem por qualquer servidor externo.",
+          "A câmara IMX500 capta vídeo continuamente; cada fotograma é analisado no próprio chip da câmara, que já tem a inferência de IA integrada, pelo que a Raspberry Pi nunca tem de suportar esse trabalho.",
+          "O deteccion_personas_ai.py recolhe essas deteções, desenha um retângulo verde sobre cada pessoa e envia o vídeo já anotado para o MediaMTX, que o serve como HLS para a app — tudo com cerca de 6 segundos de atraso.",
+          "Em paralelo, o comando_server.py expõe uma API (FastAPI) com os controlos de voo: descolar, aterrar, mover, voltar a casa ou parar de emergência.",
+          "Esse servidor traduz cada ordem para MAVLink e envia-a ao Pixhawk, que é quem realmente controla os motores — a Raspberry Pi nunca pilota o drone diretamente, apenas lhe diz o que fazer.",
+          "Um watchdog corta o voo e força o regresso a casa se a app deixar de responder durante mais de 5 segundos, como rede de segurança."
+        ],
+        "challenges_title": "Desafios técnicos que me custou resolver",
+        "challenges_intro": "Três dos bugs mais teimosos do projeto, e como cheguei ao fundo de cada um:",
+        "challenges": [
+          {
+            "title": "O atraso de vídeo disparou para 2-3 minutos",
+            "problem": "Ao migrar o streaming para passar pelo chip de IA (de rpicam-vid para deteccion_personas_ai.py), o atraso do vídeo na app passou de alguns segundos para 2-3 minutos!",
+            "cause": "Descartei primeiro o pipeline de vídeo e a própria app — reproduzindo o mesmo RTSP no VLC tinha o mesmo atraso, pelo que o problema estava antes. A causa real: o ffmpeg não fixava o intervalo de keyframe, pelo que usava um valor por defeito de cerca de 25 segundos. O MediaMTX precisa de um keyframe para poder fechar cada segmento de vídeo (HLS), por isso era obrigado a esperar minutos antes de conseguir servir algo 'em direto'.",
+            "solution": "Ao forçar um keyframe a cada segundo (as flags -g, -keyint_min e -sc_threshold do ffmpeg), o atraso baixou de imediato para cerca de 6 segundos."
+          },
+          {
+            "title": "O retângulo de deteção cobria quase todo o ecrã",
+            "problem": "Depois de limpar a deteção para só marcar pessoas, o retângulo verde saía quase sempre esticado, cobrindo praticamente todo o vídeo em vez de encaixar sobre a pessoa.",
+            "cause": "Eram dois bugs encadeados: primeiro, eu estava a reescalar as coordenadas manualmente sem ter em conta que o modelo de IA raciocina sobre um quadrado de 320×320 píxeis, não sobre a resolução real da câmara. Segundo, mesmo usando a função oficial de conversão de coordenadas do picamera2, esta espera as coordenadas já normalizadas entre 0 e 1, e o modelo devolvia-as em píxeis da sua própria entrada.",
+            "solution": "Apliquei a mesma normalização usada no exemplo oficial do picamera2/IMX500 antes de converter as coordenadas, e o retângulo passou a encaixar corretamente sobre a pessoa. (Bónus: uma tentativa de correção a meio caminho tentou modificar uma propriedade só de leitura da biblioteca e derrubou o serviço num ciclo de reinícios — foi detetado de imediato nos logs do systemd e revertido na hora.)"
+          },
+          {
+            "title": "Sem telemetria entre o Pixhawk e a Raspberry Pi",
+            "problem": "A Raspberry Pi não conseguia obter um heartbeat MAVLink estável do Pixhawk pela porta série — ou zero bytes, ou bytes corrompidos.",
+            "cause": "Fui descartando um a um: portas alternativas, baud rates, configuração UART da Raspberry Pi, orientação dos cabos TX/RX, e até o próprio hardware UART com testes de loopback. No final, a causa era puramente física: o cabo GND tinha saído da sua cavidade no conector JST-GH do Pixhawk.",
+            "solution": "Um cabo novo, bem encaixado, e a correção de um baud rate mal configurado (estava a 115200 em vez de 921600), resolveram o bloqueio numa única tarde."
+          }
+        ],
+        "status_title": "Estado do projeto",
+        "status_note": "Atualizado a 23 de setembro de 2026 — um projeto vivo que avança nos tempos livres.",
+        "status": [
+          { "name": "Telemetria Pixhawk ↔ Raspberry Pi", "pct": 100, "state": "ok", "note": "Resolvido: heartbeat MAVLink estável", "done": ["Descartadas primeiro as causas de software: reinícios, configuração UART, orientação dos cabos TX/RX e o próprio hardware UART (testado com loopback)", "Encontrada a causa real: o cabo de GND tinha saído da sua cavidade no conector JST-GH", "Cabo novo montado e testado", "Corrigido o baud rate, que estava mal configurado em 115200 em vez de 921600", "Heartbeat MAVLink confirmado de forma estável com pymavlink", "Movida a porta da Raspberry Pi para TELEM2, deixando a TELEM1 pronta para o futuro recetor de rádio", "Confirmado que o servidor de comandos já leva dias a funcionar sem problemas com o Pixhawk real"], "todo": [] },
+          { "name": "App móvel", "pct": 100, "state": "ok", "note": "Vídeo, telemetria e controlos de voo a funcionar", "done": ["Diagnosticada e corrigida uma atualização automática do Expo Go que quebrou a compatibilidade com o projeto", "Revisado o código: já implementa todos os controlos (descolar, mover, motor test, telemetria, logs, scripts) contra os endpoints reais", "Criado um ficheiro de configuração central para o IP da Raspberry Pi, que muda consoante a casa", "Confirmada a ligação real app↔servidor: vídeo da câmara visível e botões a chegar à Raspberry Pi", "Adicionado o controlo de altitude (subir/descer) ao D-pad no ecrã", "Consola de logs organizada (mais recente primeiro) e limitada às últimas 10 linhas"], "todo": ["Anotar o IP da Raspberry Pi quando estiver em Barcelona (não urgente)"] },
+          { "name": "Streaming de vídeo", "pct": 90, "state": "ok", "note": "Vídeo com deteção de pessoas em direto, ~6s de latência", "done": ["Pipeline completo construído e verificado em produção", "Montado como serviços systemd persistentes após reinício", "Migrado o streaming para incluir a deteção de pessoas no próprio chip IMX500", "Diagnosticado e corrigido um bug grave de latência (2-3 minutos) causado por um intervalo de keyframe do ffmpeg sem fixar", "Confirmada a descida da latência para cerca de 6 segundos (por vezes 3s) depois da correção"], "todo": ["Decidir entre baixar ainda mais o keyframe, aceitar os ~6s atuais, ou migrar para WebRTC mais tarde"] },
+          { "name": "Servidor de comandos", "pct": 85, "state": "ok", "note": "Implementado e ligado ao Pixhawk real", "done": ["Implementado na Raspberry Pi e ligado de verdade ao Pixhawk real", "Implementados os endpoints de descolar, aterrar, RTL, mover (com controlo de altitude), paragem de emergência, motor test, telemetria e logs em direto", "Adicionado um watchdog que força o regresso a casa se não receber sinal da app em 5 segundos", "Melhorado o registo: agora ficam também no log os comandos normais de voo, não só os scripts lançados"], "todo": ["Montá-lo como serviço systemd para que persista após reinícios", "Os avisos PreArm atuais (por falta de comando e recetor) resolvem-se sozinhos assim que essa peça for comprada"] },
+          { "name": "Frame", "pct": 83, "state": "warn", "note": "Peças impressas e validadas; falta ajustar o suporte do GPS", "done": ["Patas de aterragem — validadas", "Asas / braços — validados", "Tampa superior — validada", "Base — validada", "Separadores — validados"], "todo": ["Verificar como vai encaixar o suporte do GPS"] },
+          { "name": "Alimentação da Raspberry Pi", "pct": 80, "state": "warn", "note": "Arquitetura decidida, falta comprar o UBEC e o condensador", "done": ["Identificado que o BEC do PDB não é suficiente para a Raspberry Pi", "Decidida a arquitetura: UBEC dedicado mais condensador", "Resolvido o conflito de voltagem entre a bateria e o motor/ESC, baixando de 4S para 3S para respeitar a especificação do ESC atual"], "todo": ["Comprar a bateria 3S 5000mAh, o UBEC 5V/5A (2S–6S) e o condensador de 220–470µF", "Montar o UBEC e testá-lo em bancada antes de voar (ver Montagem)"] },
+          { "name": "Deteção de pessoas (IA)", "pct": 80, "state": "warn", "note": "A funcionar; a afinar a estabilidade do retângulo", "done": ["Subido o limiar de confiança para reduzir falsos positivos", "Removido o desenho de retângulos para objetos que não são pessoas", "Corrigido o escalamento do retângulo com a função oficial de conversão de coordenadas do picamera2", "Corrigida a normalização das coordenadas antes dessa conversão", "Confirmado que o retângulo já encaixa bem sobre a pessoa na maioria dos casos", "Desenhada uma peça de suporte para montar a câmara fixa e isolar se o que resta é vibração ou o movimento de segurar a câmara à mão"], "todo": ["Imprimir o suporte da câmara", "Testar com a câmara fixa sobre uma mesa, num espaço mais aberto, e confirmar se isso resolve a inconsistência que resta"] },
+          { "name": "Recetor e rádio-comando", "pct": 25, "state": "crit", "note": "Escolhido (RadioMaster Zorro + ELRS); falta comprar", "done": ["Escolhido o comando: RadioMaster Zorro preto, com protocolo ExpressLRS (ELRS)", "Deixada preparada a porta do Pixhawk onde vai ligar o recetor"], "todo": ["Comprar o comando e um recetor ELRS compatível", "Atualizar ambos para a mesma versão de firmware antes de os emparelhar", "Emparelhá-los (bind)", "Cablar o recetor ao Pixhawk", "Configurar o failsafe do recetor para «sem pulsos»", "Calibrar o rádio e atribuir os canais de voo", "Configurar o failsafe de perda de sinal no ArduCopter", "Confirmar que o aviso «recetor não encontrado» desaparece e testar armar sem hélices"] },
+          { "name": "Encaixe do cartão microSD da Raspberry Pi", "pct": 25, "state": "crit", "note": "Avaria de hardware detetada; trabalho em pausa", "done": ["Diagnosticado o sintoma exato: o cartão funciona com a caixa posta, mas perde o contacto sem ela"], "todo": ["Decidir entre: arrancar por USB (evita totalmente o encaixe partido), um remendo mecânico com espuma ou fita (rápido mas pouco fiável com as vibrações de voo), ou trocar a Raspberry Pi por outra", "Trabalho em pausa até essa decisão"] },
+          { "name": "Soldadura, ligações e montagem final", "pct": 0, "state": "warn", "note": "Cablagem e montagem física definitiva, por fazer", "done": [], "todo": ["Soldar o PDB", "Fazer extensões aos cabos dos ESC para chegarem aos motores", "Ligar o GPS e o ecrã OLED ao Pixhawk / Raspberry Pi", "Fixar os ESCs à tampa do frame", "Montar na tampa o buzzer, o PDB, a câmara e o OLED", "Montar o UBEC e testar em bancada (motores a 15%) que a Raspberry Pi não reinicia, antes de voar"] }
+        ],
+        "open_questions_title": "Ainda em decisão",
+        "open_questions": [
+          "Latência de streaming: manter os ~6s atuais, reduzir mais, ou migrar para WebRTC mais tarde?",
+          "Onde colocar a bateria e o módulo de potência 3DR dentro do frame",
+          "Marca/modelo exatos de alguns componentes, ainda por anotar"
+        ],
+        "stl_title": "Peças do frame (impressão 3D)",
+        "stl_intro": "O frame é um design próprio, desenhado à medida e iterado em mais de uma dezena de versões até todos os componentes encaixarem. Estes são os ficheiros STL das peças atuais, prontos a imprimir:",
+        "stl_download_all": "Descarregar todos (.zip)",
+        "stl_files": [
+          { "file": "stl/ala-v11.stl", "label": "Asa / braço do frame" },
+          { "file": "stl/base-v2.stl", "label": "Base do frame" },
+          { "file": "stl/cover-v19.stl", "label": "Tampa superior (aloja buzzer, PDB, câmara e OLED)" },
+          { "file": "stl/patas-v5.stl", "label": "Patas de aterragem" },
+          { "file": "stl/separador-v2.stl", "label": "Separador" },
+          { "file": "stl/soporte-v4.stl", "label": "Suporte geral" },
+          { "file": "stl/rp-ai-camera-case-front.stl", "label": "Caixa da câmara IA" }
+        ],
+        "closing_title": "Porque abracei este desafio",
+        "closing": "Sou developer há mais de 25 anos, mas este projeto tira-me da zona de conforto de uma forma muito saudável: aqui um bug não vive só no código, pode estar numa soldadura solta, num cabo mal encaixado, ou na forma como um chip de IA normaliza as suas coordenadas. Obriga-me a raciocinar por camadas — hardware, firmware, backend e app — e essa mistura de eletrónica, IA embarcada e desenvolvimento de software é exatamente o que mais gosto de aprender."
+      }
     }
   }
 }

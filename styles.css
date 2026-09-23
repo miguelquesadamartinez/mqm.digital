@@ -64,6 +64,48 @@ body {
   justify-content: space-between;
 }
 
+/* barra destacada del proyecto Drone, debajo del menú principal */
+.drone-banner {
+  margin-top: 12px;
+  background: linear-gradient(90deg, var(--accent), #6ea8ff);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.25);
+}
+.drone-banner .container {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  display: flex;
+  justify-content: center;
+}
+.drone-banner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 0 !important;
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  text-decoration: none !important;
+}
+.drone-banner-link::before {
+  content: "🚁";
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.drone-banner-link:hover,
+.drone-banner-link:focus,
+.drone-banner-link:focus-visible {
+  color: #fff !important;
+  text-decoration: underline !important;
+  outline: none;
+}
+@media (max-width: 480px) {
+  .drone-banner-link {
+    font-size: 0.85rem;
+  }
+}
+
 /* Hamburguesa: oculto en desktop, visible en móvil */
 .menu-toggle {
   display: none;
@@ -608,6 +650,225 @@ a:not(.btn):focus-visible {
 @media (max-width: 768px) {
   .submit-btn {
     max-width: 100%;
+  }
+}
+
+/* Sección Dron */
+.drone-eyebrow {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.drone-subhead {
+  margin: 12px 0 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.status-row {
+  padding: 10px 0;
+  border-top: 1px solid rgba(var(--accent-rgb), 0.08);
+}
+.status-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.status-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.status-name {
+  font-weight: 600;
+}
+.status-pct {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.status-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.08);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.status-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+.status-note {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.stl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.stl-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(var(--accent-rgb), 0.04);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
+  color: #212529 !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+.stl-item:hover,
+.stl-item:focus {
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: rgba(var(--accent-rgb), 0.25);
+}
+.stl-item .stl-download {
+  color: var(--accent);
+  font-weight: 700;
+  flex: none;
+}
+
+/* jump nav dentro de la sección Dron */
+.drone-jumpnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(var(--accent-rgb), 0.08);
+}
+.drone-jumpnav a {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.06);
+  border: 1px solid rgba(var(--accent-rgb), 0.12);
+  margin-left: 0 !important;
+  text-decoration: none !important;
+}
+.drone-jumpnav a:hover,
+.drone-jumpnav a:focus {
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent);
+}
+
+/* cómo funciona: pasos numerados */
+ol.drone-steps {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ol.drone-steps li {
+  padding-left: 4px;
+}
+
+/* retos técnicos */
+.challenge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.challenge {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgba(var(--accent-rgb), 0.035);
+  border-left: 3px solid var(--accent);
+}
+.challenge-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.challenge p {
+  margin: 6px 0;
+  font-size: 0.92rem;
+}
+.challenge p:first-of-type {
+  color: var(--muted);
+}
+
+/* hecho / pendiente bajo cada barra de estado */
+.status-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 20px;
+  margin-top: 10px;
+}
+.status-split h5 {
+  margin: 0 0 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+ul.status-done,
+ul.status-todo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+ul.status-done li,
+ul.status-todo li {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  padding-left: 17px;
+  position: relative;
+}
+ul.status-done li {
+  color: var(--text, inherit);
+}
+ul.status-todo li {
+  color: var(--muted);
+}
+ul.status-done li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #198754;
+  font-weight: 700;
+}
+ul.status-todo li::before {
+  content: "○";
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+}
+p.status-empty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+}
+@media (max-width: 640px) {
+  .status-split {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
 

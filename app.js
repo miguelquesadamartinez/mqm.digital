@@ -34,6 +34,7 @@ const translations = {
       cover: "Carta de presentación",
       experience: "Experiencia",
       aboutme: "Sobre Mí",
+      drone: "Dron autónomo con IA",
     },
     section: {
       about: "Acerca",
@@ -44,6 +45,7 @@ const translations = {
       contact: "Contacto",
       languages: "Idiomas",
       aboutme: "Sobre Mí",
+      drone: "Dron",
     },
     loading: "Cargando currículum…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -55,6 +57,9 @@ const translations = {
       title_cover: "Carta de presentación — Miguel Quesada Martínez",
       desc_cover:
         "Con más de 25 años de experiencia en desarrollo de software y gestión de TI. Senior Laravel Developer con trayectoria en España y Brasil.",
+      title_drone: "Dron autónomo con IA — Miguel Quesada Martínez",
+      desc_drone:
+        "Proyecto personal: quadcopter con Pixhawk, Raspberry Pi y detección de personas por IA (Sony IMX500), controlado desde una app móvil propia.",
     },
     contactButton: "Contactar",
     location: "Ubicación",
@@ -88,6 +93,7 @@ const translations = {
       cover: "Cover Letter",
       experience: "Experience",
       aboutme: "About Me",
+      drone: "Autonomous AI Drone",
     },
     section: {
       about: "About",
@@ -98,6 +104,7 @@ const translations = {
       contact: "Contact",
       languages: "Languages",
       aboutme: "About Me",
+      drone: "Drone",
     },
     loading: "Loading resume…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -109,6 +116,9 @@ const translations = {
       title_cover: "Cover Letter — Miguel Quesada Martínez",
       desc_cover:
         "Senior Laravel Developer with over 25 years of experience in software development and systems leadership. Experience in Spain and Brazil.",
+      title_drone: "Autonomous AI drone — Miguel Quesada Martínez",
+      desc_drone:
+        "Personal project: a quadcopter with Pixhawk, Raspberry Pi and AI person detection (Sony IMX500), controlled from a custom mobile app.",
     },
     contactButton: "Contact",
     location: "Location",
@@ -142,6 +152,7 @@ const translations = {
       about: "Carta de apresentação",
       experience: "Experiência",
       aboutme: "Sobre Mim",
+      drone: "Drone autónomo com IA",
     },
     section: {
       cover: "Carta de apresentação",
@@ -152,6 +163,7 @@ const translations = {
       contact: "Contato",
       languages: "Idiomas",
       aboutme: "Sobre Mim",
+      drone: "Drone",
     },
     loading: "Carregando currículo…",
     footer: "© 2025 Miguel Quesada Martinez",
@@ -163,6 +175,9 @@ const translations = {
       title_cover: "Carta de apresentação — Miguel Quesada Martínez",
       desc_cover:
         "Com mais de 25 anos de experiência em desenvolvimento de software e liderança de sistemas. Senior Laravel Developer com experiência em Espanha e Brasil.",
+      title_drone: "Drone autónomo com IA — Miguel Quesada Martínez",
+      desc_drone:
+        "Projeto pessoal: um quadcopter com Pixhawk, Raspberry Pi e deteção de pessoas por IA (Sony IMX500), controlado a partir de uma app móvel própria.",
     },
     contactButton: "Contactar",
     location: "Localização",
@@ -265,6 +280,10 @@ function updateMetaForRoute() {
     title = (metaInfo && metaInfo.title_cover) || title;
     desc = (metaInfo && metaInfo.desc_cover) || desc;
   }
+  if (hash === "drone" || hash.indexOf("drone-") === 0) {
+    title = (metaInfo && metaInfo.title_drone) || title;
+    desc = (metaInfo && metaInfo.desc_drone) || desc;
+  }
   if (title) document.title = title;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", desc || "");
@@ -331,7 +350,7 @@ function localizedEntry(baseArrayName, index) {
 
 async function loadData() {
   try {
-    const res = await fetch("data.json?version=1.6");
+    const res = await fetch("data.json?version=1.9");
     data = await res.json();
     loading && loading.remove();
     // insert/update JSON-LD Person schema using loaded data
@@ -382,6 +401,16 @@ async function loadData() {
 function renderRoute() {
   if (!data) return; // Don't render if data is not loaded yet
   const hash = location.hash.replace("#", "") || "about";
+  if (hash === "drone" || hash.indexOf("drone-") === 0) {
+    renderDrone();
+    if (hash !== "drone") {
+      requestAnimationFrame(() => {
+        const target = document.getElementById(hash);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+    return;
+  }
   switch (hash) {
     case "cover":
       // cover now unified into About
@@ -673,6 +702,248 @@ function renderAboutMe() {
       )}</p>
       <p class="meta">GitHub: <a href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer">miguelquesadamartinez</a></p>
     </section>
+  `);
+}
+
+function renderDrone() {
+  const d = L("drone");
+  if (!d) {
+    app.innerHTML = renderHeader();
+    return;
+  }
+  const stateColor = { ok: "#198754", warn: "#e0a100", crit: "#dc3545" };
+  const nav = d.nav || {};
+
+  app.innerHTML = patchSectionWithCV(`
+    ${renderHeader()}
+    <section class="card">
+      <div class="drone-eyebrow">${escapeHtml(d.eyebrow)}</div>
+      <h2 class="section-title" style="font-size:1.3rem">${escapeHtml(
+        d.title,
+      )}</h2>
+      <p>${escapeHtml(d.summary)}</p>
+      ${
+        (d.quick_facts || []).length
+          ? `<div class="chips" style="margin:10px 0 4px">${d.quick_facts
+              .map((f) => `<span class="chip">${escapeHtml(f)}</span>`)
+              .join("")}</div>`
+          : ""
+      }
+      ${(d.intro || []).map((p) => `<p>${escapeHtml(p)}</p>`).join("")}
+      <div class="drone-jumpnav">
+        ${["architecture", "how", "challenges", "status", "stl", "questions"]
+          .filter((k) => nav[k])
+          .map(
+            (k) =>
+              `<a href="#drone-${k}">${escapeHtml(nav[k])}</a>`,
+          )
+          .join("")}
+      </div>
+    </section>
+
+    <section class="card" id="drone-architecture">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.stack_title,
+      )}</h3>
+      <h4 class="drone-subhead">${escapeHtml(d.hardware_title)}</h4>
+      <ul class="list">${(d.hardware || [])
+        .map((h) => `<li>${escapeHtml(h)}</li>`)
+        .join("")}</ul>
+      <h4 class="drone-subhead" style="margin-top:16px">${escapeHtml(
+        d.software_title,
+      )}</h4>
+      <ul class="list">${(d.software || [])
+        .map((s) => `<li>${escapeHtml(s)}</li>`)
+        .join("")}</ul>
+      ${
+        (d.repos || []).length
+          ? `<h4 class="drone-subhead">${escapeHtml(
+              d.repos_title || "",
+            )}</h4>
+      <ul class="list drone-repos">${d.repos
+        .map(
+          (r) =>
+            `<li><a href="${escapeHtml(
+              r.url,
+            )}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+              r.label,
+            )}</a></li>`,
+        )
+        .join("")}</ul>`
+          : ""
+      }
+    </section>
+
+    ${
+      d.how_title
+        ? `
+    <section class="card" id="drone-how">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.how_title,
+      )}</h3>
+      ${d.how_intro ? `<p class="meta" style="margin-bottom:10px">${escapeHtml(d.how_intro)}</p>` : ""}
+      <ol class="drone-steps">
+        ${(d.how_steps || [])
+          .map((s) => `<li>${escapeHtml(s)}</li>`)
+          .join("")}
+      </ol>
+    </section>`
+        : ""
+    }
+
+    ${
+      d.challenges_title
+        ? `
+    <section class="card" id="drone-challenges">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.challenges_title,
+      )}</h3>
+      ${d.challenges_intro ? `<p class="meta" style="margin-bottom:14px">${escapeHtml(d.challenges_intro)}</p>` : ""}
+      <div class="challenge-list">
+        ${(d.challenges || [])
+          .map(
+            (c) => `
+          <div class="challenge">
+            <div class="challenge-title">${escapeHtml(c.title)}</div>
+            <p>${escapeHtml(c.problem)}</p>
+            <p><strong>${
+              currentLang === "en"
+                ? "Root cause:"
+                : currentLang === "pt"
+                  ? "Causa:"
+                  : "Causa:"
+            }</strong> ${escapeHtml(c.cause)}</p>
+            <p><strong>${
+              currentLang === "en"
+                ? "Fix:"
+                : currentLang === "pt"
+                  ? "Correção:"
+                  : "Solución:"
+            }</strong> ${escapeHtml(c.solution)}</p>
+          </div>`,
+          )
+          .join("")}
+      </div>
+    </section>`
+        : ""
+    }
+
+    <section class="card" id="drone-status">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.status_title,
+      )}</h3>
+      <p class="meta" style="margin-bottom:12px">${escapeHtml(
+        d.status_note,
+      )}</p>
+      <div class="status-list">
+        ${(d.status || [])
+          .map((s) => {
+            const color = stateColor[s.state] || "var(--muted)";
+            return `
+          <div class="status-row">
+            <div class="status-top">
+              <span class="status-name">${escapeHtml(s.name)}</span>
+              <span class="status-pct" style="color:${color}">${
+                s.pct
+              }%</span>
+            </div>
+            <div class="status-track"><div class="status-fill" style="width:${
+              s.pct
+            }%;background:${color}"></div></div>
+            <div class="status-note">${escapeHtml(s.note)}</div>
+            <div class="status-split">
+              <div>
+                <h5>${
+                  currentLang === "en"
+                    ? "Done"
+                    : currentLang === "pt"
+                      ? "Feito"
+                      : "Hecho"
+                }</h5>
+                ${
+                  (s.done || []).length
+                    ? `<ul class="status-done">${s.done
+                        .map((det) => `<li>${escapeHtml(det)}</li>`)
+                        .join("")}</ul>`
+                    : `<p class="status-empty">${
+                        currentLang === "en"
+                          ? "Nothing yet."
+                          : currentLang === "pt"
+                            ? "Nada ainda."
+                            : "Nada todavía."
+                      }</p>`
+                }
+              </div>
+              <div>
+                <h5>${
+                  currentLang === "en"
+                    ? "Still to do"
+                    : currentLang === "pt"
+                      ? "Por fazer"
+                      : "Pendiente"
+                }</h5>
+                ${
+                  (s.todo || []).length
+                    ? `<ul class="status-todo">${s.todo
+                        .map((det) => `<li>${escapeHtml(det)}</li>`)
+                        .join("")}</ul>`
+                    : `<p class="status-empty">${
+                        currentLang === "en"
+                          ? "Nothing — closed."
+                          : currentLang === "pt"
+                            ? "Nada — fechado."
+                            : "Nada — cerrado."
+                      }</p>`
+                }
+              </div>
+            </div>
+          </div>`;
+          })
+          .join("")}
+      </div>
+    </section>
+
+    <section class="card" id="drone-stl">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.stl_title,
+      )}</h3>
+      <p>${escapeHtml(d.stl_intro)}</p>
+      <div class="stl-grid">
+        ${(d.stl_files || [])
+          .map(
+            (f) => `
+          <a class="stl-item" href="${escapeHtml(f.file)}" download>
+            <span class="stl-name">${escapeHtml(f.label)}</span>
+            <span class="stl-download" aria-hidden="true">⬇</span>
+          </a>`,
+          )
+          .join("")}
+      </div>
+      <a class="cv-download-btn" href="stl/piezas-drone.zip" download>${escapeHtml(
+        d.stl_download_all,
+      )}</a>
+    </section>
+
+    <section class="card" id="drone-questions">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.open_questions_title,
+      )}</h3>
+      <ul class="list">${(d.open_questions || [])
+        .map((q) => `<li>${escapeHtml(q)}</li>`)
+        .join("")}</ul>
+    </section>
+
+    ${
+      d.closing_title
+        ? `
+    <section class="card">
+      <h3 class="section-title" style="font-size:1.05rem">${escapeHtml(
+        d.closing_title,
+      )}</h3>
+      <p>${escapeHtml(d.closing)}</p>
+    </section>`
+        : ""
+    }
   `);
 }
 
