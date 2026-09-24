@@ -154,10 +154,19 @@
       "Controlador de vuelo Pixhawk 2.4.8 con firmware ArduCopter 4.6.3",
       "Raspberry Pi 4 Model B como compañero de a bordo (companion computer)",
       "Cámara Raspberry Pi AI (Sony IMX500) — inferencia de IA en el propio sensor",
-      "4× motores brushless A2212 1000KV + 4× ESC 30A + hélices de 10\"",
-      "Batería LiPo 3S 5000mAh + PDB Matek PDB-XT60 + UBEC dedicado 5V/5A para la Raspberry Pi",
-      "GPS u-blox NEO-M9N, pantalla OLED SSD1306, buzzer y botón de seguridad",
-      "Frame diseñado e impreso en 3D a medida (piezas STL más abajo)"
+      "4× motores brushless A2212 1000KV + 4× ESC 30A (ICQUANZX) + hélices de 10\"",
+      "Batería LiPo 3S 5000mAh (11.1V nominal) — elegida para respetar la especificación del motor/ESC actual, pendiente de comprar",
+      "PDB Matek PDB-XT60, con BEC integrado de 5V/1.5A — insuficiente por sí solo para alimentar la Raspberry Pi",
+      "UBEC dedicado 5V/5A (entrada 2S-6S) + condensador de 220-470µF entre 5V y GND, para la Raspberry Pi — pendientes de comprar y montar",
+      "Módulo de potencia 3DR, para que el Pixhawk mida voltaje y corriente de la batería",
+      "GPS u-blox NEO-M9N — pendiente de conectar a la Pixhawk",
+      "Pantalla OLED SSD1306 (previsiblemente por I2C) — pendiente de conectar",
+      "Buzzer y botón/interruptor de seguridad",
+      "Mando RadioMaster Zorro negro (ExpressLRS, EdgeTX) + receptor ELRS a juego (RadioMaster RP1/RP2 o Happymodel EP1/EP2) — pendientes de comprar",
+      "Frame propio impreso en 3D a medida: patas, alas/brazos, tapa, base y separadores (piezas STL más abajo)",
+      "Soporte de cámara impreso en 3D, diseñado para fijarla y descartar la vibración como causa de los recuadros de detección desencajados",
+      "Cable de telemetría Pixhawk↔Raspberry Pi por el conector JST-GH del Pixhawk — rehecho a mano tras localizar un fallo del hilo de GND",
+      "Extensiones de cable soldadas entre los ESC y los motores, porque los cables de fábrica no llegan"
     ],
     "software_title": "Software",
     "software": [
@@ -198,7 +207,8 @@
           "Conectada al puerto TELEM2 del Pixhawk mediante el UART de hardware de la Raspberry Pi",
           "921600 baudios en ambos extremos (antes estaban mal puestos a 115200)",
           "UART habilitado (enable_uart=1) y el Bluetooth integrado desactivado (dtoverlay=disable-bt) para liberar el UART de hardware completo, sin compartirlo con la consola serie",
-          "Conexión verificada con un heartbeat MAVLink real y estable, leído con pymavlink"
+          "Conexión verificada con un heartbeat MAVLink real y estable, leído con pymavlink",
+          "La Raspberry Pi estuvo primero en TELEM1; se movió a TELEM2 para dejar TELEM1 libre y preparado para el futuro receptor de radio ELRS"
         ],
         "code": "# /boot/config.txt — al final del archivo\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — quitar \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# tras reiniciar, comprobar que el puerto existe:\nls /dev/serial0"
       },
@@ -209,18 +219,21 @@
           "FastAPI + dronekit/pymavlink, escuchando en el puerto 8000",
           "Configuración en un archivo .env (copiado de .env.example) — sin él, el servidor se conectaba por defecto a un simulador (SITL) en vez de al Pixhawk real",
           "Watchdog interno: si no recibe un /ping de la app en 5 segundos, fuerza la vuelta a casa como red de seguridad",
+          "Expone estos endpoints HTTP a la app: /ping, /despegar, /aterrizar, /rtl, /mover, /parar_movimiento, /parada_emergencia, /motor_test/iniciar, /motor_test/detener, /ejecutar_script, /detener_script, /logs y /telemetria",
           "Pendiente: montarlo también como servicio systemd para que arranque solo tras un reinicio"
         ],
-        "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca en 0.0.0.0:8000"
+        "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca en 0.0.0.0:8000\n\n# comprobación rápida desde otra máquina de la misma red:\ncurl -X POST http://<ip-rpi>:8000/ping"
       },
       {
         "title": "Cámara y detección de personas",
         "items": [
           "deteccion_personas_ai.py corre la inferencia de IA directamente en el chip Sony IMX500 de la cámara, sin cargar la CPU de la Raspberry Pi",
-          "Publica el vídeo por ffmpeg → RTSP → MediaMTX → HLS hacia la app",
+          "Publica el vídeo por ffmpeg → RTSP (rtsp://localhost:8554/drone) → MediaMTX → HLS hacia la app",
+          "Resolución 640×480 a 10 fps, con un buffer de solo 2 fotogramas en la cámara — antes eran 12, y esa cola es la que causaba el minuto de retraso (se iba llenando de fotogramas cada vez más viejos)",
+          "Umbral de confianza de la detección: 0.6 (solo se dibuja la persona si el modelo supera esa confianza)",
           "Intervalo de keyframe de ffmpeg fijado a 1 segundo (-g, -keyint_min y -sc_threshold en 0) para mantener la latencia en vivo baja"
         ],
-        "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # comprobar que la cámara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo IA que usa deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+        "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # comprobar que la cámara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo IA que usa deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk\n\n# comando ffmpeg real que lanza el propio script (fotogramas por stdin -> RTSP):\nffmpeg -y -hide_banner -loglevel warning -nostats \\\n  -use_wallclock_as_timestamps 1 \\\n  -f rawvideo -pixel_format bgr24 -video_size 640x480 -framerate 10 \\\n  -i - \\\n  -c:v libx264 -preset ultrafast -tune zerolatency \\\n  -g 10 -keyint_min 10 -sc_threshold 0 \\\n  -pix_fmt yuv420p \\\n  -f rtsp rtsp://localhost:8554/drone"
       },
       {
         "title": "Servicios systemd (arrancan solos con la Raspberry Pi)",
@@ -229,7 +242,15 @@
           "drone-camera.service — corre deteccion_personas_ai.py, que a su vez lanza ffmpeg; depende de mediamtx.service (After / Requires) para no arrancar antes de tiempo",
           "Restart=on-failure: si el proceso se cae, systemd lo reinicia solo a los 2 segundos"
         ],
-        "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming de camara IA (deteccion de personas) hacia MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+        "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming de camara IA (deteccion de personas) hacia MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service\n\n# comprobar que van bien / ver sus logs:\nsudo systemctl status drone-camera.service mediamtx.service\nsudo journalctl -u drone-camera.service -f"
+      },
+      {
+        "title": "Despliegue y actualización del código",
+        "items": [
+          "El código de la Raspberry Pi vive en el mismo repositorio que los dos PCs del usuario: nada de copiar archivos sueltos a mano",
+          "Cada cambio se sube desde el PC y se actualiza en la Raspberry Pi con un git pull, así no hay riesgo de que una copia se quede desactualizada"
+        ],
+        "code": "cd ~/Documents/_Codes/drone-env\ngit pull\n\n# si se tocó comando_server.py, reiniciarlo a mano (aún no es systemd):\n# Ctrl+C en su terminal y volver a lanzar:\npython comando_server.py\n\n# si se tocó deteccion_personas_ai.py, el servicio se reinicia solo:\nsudo systemctl restart drone-camera.service"
       },
       {
         "title": "Red y acceso desde la app",
@@ -425,10 +446,19 @@
           "Pixhawk 2.4.8 flight controller running ArduCopter 4.6.3 firmware",
           "Raspberry Pi 4 Model B as the onboard companion computer",
           "Raspberry Pi AI Camera (Sony IMX500) — AI inference on the sensor itself",
-          "4× A2212 1000KV brushless motors + 4× 30A ESCs + 10\" propellers",
-          "3S 5000mAh LiPo battery + Matek PDB-XT60 power distribution board + dedicated 5V/5A UBEC for the Raspberry Pi",
-          "u-blox NEO-M9N GPS, SSD1306 OLED display, buzzer and safety switch",
-          "Custom-designed, 3D-printed frame (STL files below)"
+          "4× A2212 1000KV brushless motors + 4× 30A ESCs (ICQUANZX) + 10\" propellers",
+          "3S 5000mAh LiPo battery (11.1V nominal) — chosen to stay within the current motor/ESC spec, still to be bought",
+          "Matek PDB-XT60 power distribution board, with a built-in 5V/1.5A BEC — not enough on its own to power the Raspberry Pi",
+          "Dedicated 5V/5A UBEC (2S-6S input) + a 220-470µF capacitor between 5V and GND, for the Raspberry Pi — still to be bought and fitted",
+          "3DR power module, so the Pixhawk can measure battery voltage and current",
+          "u-blox NEO-M9N GPS — still to be wired to the Pixhawk",
+          "SSD1306 OLED display (likely over I2C) — still to be wired",
+          "Buzzer and safety switch",
+          "RadioMaster Zorro black transmitter (ExpressLRS, EdgeTX) + a matching ELRS receiver (RadioMaster RP1/RP2 or Happymodel EP1/EP2) — still to be bought",
+          "Custom-designed, 3D-printed frame: legs, arms, lid, base and spacers (STL files below)",
+          "3D-printed camera mount, designed to rule out vibration as the cause of the detection box drifting off target",
+          "Telemetry cable between the Pixhawk and the Raspberry Pi through the Pixhawk's JST-GH connector — remade by hand after tracking down a broken GND wire",
+          "Soldered cable extensions between the ESCs and the motors, since the stock cables don't reach"
         ],
         "software_title": "Software",
         "software": [
@@ -469,7 +499,8 @@
               "Connected to the Pixhawk's TELEM2 port through the Raspberry Pi's hardware UART",
               "921600 baud on both ends (it used to be wrongly set to 115200)",
               "UART enabled (enable_uart=1) and the onboard Bluetooth disabled (dtoverlay=disable-bt) to free up the full hardware UART instead of sharing it with the serial console",
-              "Connection verified with a real, stable MAVLink heartbeat read via pymavlink"
+              "Connection verified with a real, stable MAVLink heartbeat read via pymavlink",
+              "The Raspberry Pi was first on TELEM1; it was moved to TELEM2 to leave TELEM1 free and ready for the future ELRS radio receiver"
             ],
             "code": "# /boot/config.txt — at the end of the file\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — remove \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# after rebooting, confirm the port exists:\nls /dev/serial0"
           },
@@ -480,18 +511,21 @@
               "FastAPI + dronekit/pymavlink, listening on port 8000",
               "Configured through a .env file (copied from .env.example) — without it, the server defaulted to a simulator (SITL) instead of the real Pixhawk",
               "Built-in watchdog: forces a return-to-home if it doesn't get a /ping from the app within 5 seconds, as a safety net",
+              "Exposes these HTTP endpoints to the app: /ping, /despegar, /aterrizar, /rtl, /mover, /parar_movimiento, /parada_emergencia, /motor_test/iniciar, /motor_test/detener, /ejecutar_script, /detener_script, /logs and /telemetria",
               "Still to do: also set it up as a systemd service so it starts automatically after a reboot"
             ],
-            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copied from .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # starts on 0.0.0.0:8000"
+            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copied from .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # starts on 0.0.0.0:8000\n\n# quick check from another machine on the same network:\ncurl -X POST http://<rpi-ip>:8000/ping"
           },
           {
             "title": "Camera and person detection",
             "items": [
               "deteccion_personas_ai.py runs AI inference directly on the camera's Sony IMX500 chip, with no load on the Raspberry Pi's CPU",
-              "Publishes video through ffmpeg → RTSP → MediaMTX → HLS to the app",
+              "Publishes video through ffmpeg → RTSP (rtsp://localhost:8554/drone) → MediaMTX → HLS to the app",
+              "640×480 resolution at 10 fps, with a camera buffer of just 2 frames — it used to be 12, and that queue is what caused the one-minute delay (it kept filling up with older and older frames)",
+              "Detection confidence threshold: 0.6 (a person is only drawn if the model clears that confidence)",
               "ffmpeg's keyframe interval fixed at 1 second (-g, -keyint_min and -sc_threshold set to 0) to keep live latency low"
             ],
-            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirm the camera responds\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# AI model used by deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirm the camera responds\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# AI model used by deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk\n\n# the actual ffmpeg command the script launches (frames via stdin -> RTSP):\nffmpeg -y -hide_banner -loglevel warning -nostats \\\n  -use_wallclock_as_timestamps 1 \\\n  -f rawvideo -pixel_format bgr24 -video_size 640x480 -framerate 10 \\\n  -i - \\\n  -c:v libx264 -preset ultrafast -tune zerolatency \\\n  -g 10 -keyint_min 10 -sc_threshold 0 \\\n  -pix_fmt yuv420p \\\n  -f rtsp rtsp://localhost:8554/drone"
           },
           {
             "title": "Systemd services (start automatically with the Raspberry Pi)",
@@ -500,7 +534,15 @@
               "drone-camera.service — runs deteccion_personas_ai.py, which in turn launches ffmpeg; it depends on mediamtx.service (After / Requires) so it never starts too early",
               "Restart=on-failure: if the process crashes, systemd restarts it after 2 seconds on its own"
             ],
-            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=AI camera streaming (person detection) to MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=AI camera streaming (person detection) to MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service\n\n# check they're healthy / view their logs:\nsudo systemctl status drone-camera.service mediamtx.service\nsudo journalctl -u drone-camera.service -f"
+          },
+          {
+            "title": "Deploying and updating the code",
+            "items": [
+              "The Raspberry Pi's code lives in the same repository as the two PCs the user works from — no copying loose files around by hand",
+              "Every change is pushed from the PC and pulled onto the Raspberry Pi with a git pull, so there's no risk of a copy falling out of date"
+            ],
+            "code": "cd ~/Documents/_Codes/drone-env\ngit pull\n\n# if comando_server.py changed, restart it by hand (not systemd yet):\n# Ctrl+C in its terminal, then launch it again:\npython comando_server.py\n\n# if deteccion_personas_ai.py changed, the service restarts itself:\nsudo systemctl restart drone-camera.service"
           },
           {
             "title": "Network and access from the app",
@@ -696,10 +738,19 @@
           "Controlador de voo Pixhawk 2.4.8 com firmware ArduCopter 4.6.3",
           "Raspberry Pi 4 Model B como computador de bordo (companion computer)",
           "Câmara Raspberry Pi AI (Sony IMX500) — inferência de IA no próprio sensor",
-          "4× motores brushless A2212 1000KV + 4× ESC 30A + hélices de 10\"",
-          "Bateria LiPo 3S 5000mAh + PDB Matek PDB-XT60 + UBEC dedicado 5V/5A para a Raspberry Pi",
-          "GPS u-blox NEO-M9N, ecrã OLED SSD1306, buzzer e botão de segurança",
-          "Frame desenhado à medida e impresso em 3D (ficheiros STL mais abaixo)"
+          "4× motores brushless A2212 1000KV + 4× ESC 30A (ICQUANZX) + hélices de 10\"",
+          "Bateria LiPo 3S 5000mAh (11.1V nominal) — escolhida para respeitar a especificação do motor/ESC atual, ainda por comprar",
+          "PDB Matek PDB-XT60, com BEC integrado de 5V/1.5A — insuficiente por si só para alimentar a Raspberry Pi",
+          "UBEC dedicado 5V/5A (entrada 2S-6S) + condensador de 220-470µF entre 5V e GND, para a Raspberry Pi — ainda por comprar e montar",
+          "Módulo de potência 3DR, para o Pixhawk medir tensão e corrente da bateria",
+          "GPS u-blox NEO-M9N — ainda por ligar ao Pixhawk",
+          "Ecrã OLED SSD1306 (provavelmente por I2C) — ainda por ligar",
+          "Buzzer e botão/interruptor de segurança",
+          "Comando RadioMaster Zorro preto (ExpressLRS, EdgeTX) + recetor ELRS a condizer (RadioMaster RP1/RP2 ou Happymodel EP1/EP2) — ainda por comprar",
+          "Frame próprio desenhado à medida e impresso em 3D: pernas, braços, tampa, base e espaçadores (ficheiros STL mais abaixo)",
+          "Suporte de câmara impresso em 3D, desenhado para a fixar e descartar a vibração como causa dos retângulos de deteção desalinhados",
+          "Cabo de telemetria entre o Pixhawk e a Raspberry Pi através do conector JST-GH do Pixhawk — refeito à mão depois de localizar uma falha no fio de GND",
+          "Extensões de cabo soldadas entre os ESC e os motores, porque os cabos de fábrica não chegam"
         ],
         "software_title": "Software",
         "software": [
@@ -740,7 +791,8 @@
               "Ligada à porta TELEM2 do Pixhawk através do UART de hardware da Raspberry Pi",
               "921600 baud em ambos os lados (antes estava mal configurado em 115200)",
               "UART ativado (enable_uart=1) e o Bluetooth integrado desativado (dtoverlay=disable-bt) para libertar o UART de hardware completo, sem o partilhar com a consola série",
-              "Ligação confirmada com um heartbeat MAVLink real e estável, lido com pymavlink"
+              "Ligação confirmada com um heartbeat MAVLink real e estável, lido com pymavlink",
+              "A Raspberry Pi esteve primeiro na TELEM1; foi movida para a TELEM2 para deixar a TELEM1 livre e pronta para o futuro recetor de rádio ELRS"
             ],
             "code": "# /boot/config.txt — no final do ficheiro\ndtoverlay=disable-bt\nenable_uart=1\n\n# /boot/cmdline.txt — remover \"console=serial0,115200\"\n\nsudo systemctl disable bluetooth\nsudo reboot\n\n# depois de reiniciar, confirmar que a porta existe:\nls /dev/serial0"
           },
@@ -751,18 +803,21 @@
               "FastAPI + dronekit/pymavlink, a escutar na porta 8000",
               "Configuração num ficheiro .env (copiado de .env.example) — sem ele, o servidor ligava por defeito a um simulador (SITL) em vez do Pixhawk real",
               "Watchdog interno: se não receber um /ping da app em 5 segundos, força o regresso a casa como rede de segurança",
+              "Expõe estes endpoints HTTP à app: /ping, /despegar, /aterrizar, /rtl, /mover, /parar_movimiento, /parada_emergencia, /motor_test/iniciar, /motor_test/detener, /ejecutar_script, /detener_script, /logs e /telemetria",
               "Por fazer: montá-lo também como serviço systemd para que arranque sozinho depois de um reinício"
             ],
-            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca em 0.0.0.0:8000"
+            "code": "cd ~/Documents/_Codes/drone-env\npip install fastapi uvicorn dronekit pymavlink python-dotenv\n\n# .env (copiado de .env.example):\nDRONE_CONN=/dev/serial0:921600\nDRONE_WATCHDOG_TIMEOUT=5\n\npython comando_server.py   # arranca em 0.0.0.0:8000\n\n# verificação rápida a partir de outra máquina na mesma rede:\ncurl -X POST http://<ip-rpi>:8000/ping"
           },
           {
             "title": "Câmara e deteção de pessoas",
             "items": [
               "O deteccion_personas_ai.py corre a inferência de IA diretamente no chip Sony IMX500 da câmara, sem sobrecarregar o CPU da Raspberry Pi",
-              "Publica o vídeo por ffmpeg → RTSP → MediaMTX → HLS para a app",
+              "Publica o vídeo por ffmpeg → RTSP (rtsp://localhost:8554/drone) → MediaMTX → HLS para a app",
+              "Resolução 640×480 a 10 fps, com um buffer de apenas 2 fotogramas na câmara — antes eram 12, e essa fila é que causava o minuto de atraso (ia-se enchendo de fotogramas cada vez mais antigos)",
+              "Limiar de confiança da deteção: 0.6 (só se desenha a pessoa se o modelo ultrapassar essa confiança)",
               "Intervalo de keyframe do ffmpeg fixado em 1 segundo (-g, -keyint_min e -sc_threshold a 0) para manter a latência em direto baixa"
             ],
-            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirmar que a câmara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo de IA usado pelo deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+            "code": "sudo apt install -y rpicam-apps python3-picamera2 imx500-all\nrpicam-hello --timeout 0        # confirmar que a câmara responde\n\n# /boot/firmware/config.txt\ncamera_auto_detect=1\n\n# modelo de IA usado pelo deteccion_personas_ai.py:\n# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk\n\n# comando ffmpeg real que o próprio script lança (fotogramas via stdin -> RTSP):\nffmpeg -y -hide_banner -loglevel warning -nostats \\\n  -use_wallclock_as_timestamps 1 \\\n  -f rawvideo -pixel_format bgr24 -video_size 640x480 -framerate 10 \\\n  -i - \\\n  -c:v libx264 -preset ultrafast -tune zerolatency \\\n  -g 10 -keyint_min 10 -sc_threshold 0 \\\n  -pix_fmt yuv420p \\\n  -f rtsp rtsp://localhost:8554/drone"
           },
           {
             "title": "Serviços systemd (arrancam sozinhos com a Raspberry Pi)",
@@ -771,7 +826,15 @@
               "drone-camera.service — corre o deteccion_personas_ai.py, que por sua vez lança o ffmpeg; depende do mediamtx.service (After / Requires) para nunca arrancar demasiado cedo",
               "Restart=on-failure: se o processo cair, o systemd reinicia-o sozinho ao fim de 2 segundos"
             ],
-            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming da camara IA (deteção de pessoas) para o MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service"
+            "code": "# /etc/systemd/system/drone-camera.service\n[Unit]\nDescription=Streaming da camara IA (deteção de pessoas) para o MediaMTX\nAfter=mediamtx.service\nRequires=mediamtx.service\n\n[Service]\nWorkingDirectory=/home/emiki/Documents/_Codes/drone-env\nExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py\nRestart=on-failure\nRestartSec=2\n\n[Install]\nWantedBy=multi-user.target\n\nsudo systemctl daemon-reload\nsudo systemctl enable --now mediamtx.service drone-camera.service\n\n# confirmar que estão bem / ver os seus logs:\nsudo systemctl status drone-camera.service mediamtx.service\nsudo journalctl -u drone-camera.service -f"
+          },
+          {
+            "title": "Implementação e atualização do código",
+            "items": [
+              "O código da Raspberry Pi vive no mesmo repositório dos dois PCs do utilizador: nada de copiar ficheiros soltos à mão",
+              "Cada alteração é enviada a partir do PC e atualizada na Raspberry Pi com um git pull, para não haver risco de uma cópia ficar desatualizada"
+            ],
+            "code": "cd ~/Documents/_Codes/drone-env\ngit pull\n\n# se foi alterado o comando_server.py, reiniciá-lo à mão (ainda não é systemd):\n# Ctrl+C no seu terminal e voltar a lançar:\npython comando_server.py\n\n# se foi alterado o deteccion_personas_ai.py, o serviço reinicia-se sozinho:\nsudo systemctl restart drone-camera.service"
           },
           {
             "title": "Rede e acesso a partir da app",

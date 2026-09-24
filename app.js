@@ -350,7 +350,7 @@ function localizedEntry(baseArrayName, index) {
 
 async function loadData() {
   try {
-    const res = await fetch("data.json?version=2.1");
+    const res = await fetch("data.json?version=2.3");
     data = await res.json();
     loading && loading.remove();
     // insert/update JSON-LD Person schema using loaded data
