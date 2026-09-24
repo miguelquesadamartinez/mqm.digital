@@ -265,8 +265,8 @@ function setLang(lang) {
   document
     .querySelectorAll(".lang-btn")
     .forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
-  // re-render current route so section titles update
-  renderRoute();
+  // re-render current route so section titles update, without re-triggering the anchor scroll
+  renderRoute(false);
   // update document title and meta description / og tags based on current route
   updateMetaForRoute();
 }
@@ -398,12 +398,12 @@ async function loadData() {
   }
 }
 
-function renderRoute() {
+function renderRoute(scrollToAnchor = true) {
   if (!data) return; // Don't render if data is not loaded yet
   const hash = location.hash.replace("#", "") || "about";
   if (hash === "drone" || hash.indexOf("drone-") === 0) {
     renderDrone();
-    if (hash !== "drone") {
+    if (scrollToAnchor && hash !== "drone") {
       requestAnimationFrame(() => {
         const target = document.getElementById(hash);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
