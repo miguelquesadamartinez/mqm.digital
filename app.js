@@ -350,7 +350,7 @@ function localizedEntry(baseArrayName, index) {
 
 async function loadData() {
   try {
-    const res = await fetch("data.json?version=2.3");
+    const res = await fetch("data.json?version=2.5");
     data = await res.json();
     loading && loading.remove();
     // insert/update JSON-LD Person schema using loaded data
@@ -730,22 +730,29 @@ function renderDrone() {
           : ""
       }
       ${(d.intro || []).map((p) => `<p>${escapeHtml(p)}</p>`).join("")}
-      <div class="drone-jumpnav">
-        ${[
-          "architecture",
-          "how",
-          "rpi",
-          "challenges",
-          "status",
-          "stl",
-          "questions",
-        ]
-          .filter((k) => nav[k])
-          .map(
-            (k) =>
-              `<a href="#drone-${k}">${escapeHtml(nav[k])}</a>`,
-          )
-          .join("")}
+      <div class="drone-jumpnav" role="tablist">
+        ${(() => {
+          const currentHash = location.hash.replace("#", "") || "drone";
+          return [
+            "architecture",
+            "how",
+            "rpi",
+            "challenges",
+            "status",
+            "stl",
+            "questions",
+          ]
+            .filter((k) => nav[k])
+            .map((k) => {
+              const isActive =
+                currentHash === `drone-${k}` ||
+                (currentHash === "drone" && k === "architecture");
+              return `<a href="#drone-${k}" role="tab" aria-selected="${isActive}"${
+                isActive ? ' class="active"' : ""
+              }>${escapeHtml(nav[k])}</a>`;
+            })
+            .join("");
+        })()}
       </div>
     </section>
 
