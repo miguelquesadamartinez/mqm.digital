@@ -159,6 +159,11 @@ body {
   border-color: rgba(var(--accent-rgb), 0.15);
   background: rgba(var(--accent-rgb), 0.03);
 }
+/* los selectores de idioma son enlaces: sin el margen de a:not(.btn) */
+.lang-switch .lang-btn {
+  display: inline-block;
+  margin-left: 0;
+}
 .lang-btn.active {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.06);

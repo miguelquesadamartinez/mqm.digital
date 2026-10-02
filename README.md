@@ -30,50 +30,31 @@ Desarrollado como SPA (Single Page Application) vanilla JavaScript sin framework
 
 ```
 mqm.digital/
-├── index.html          # Versión raíz (español)
-├── app.js              # Lógica SPA, routing, i18n (~695 líneas)
-├── data.json           # Datos del CV + traducciones
+├── index.html          # Web completa en español (todo el texto escrito en el HTML)
+├── en.html             # Web completa en inglés
+├── pt.html             # Web completa en portugués
+├── app.js              # Solo menú móvil, mostrar página según #hash, cambio de idioma y cookies
 ├── styles.css          # Estilos responsive
 ├── cvs/                # PDFs descargables por idioma
 ├── sitemap.xml         # Sitemap con variantes de idioma
 └── robots.txt
 ```
 
-### Sistema de internacionalización (i18n)
+### Contenido e idiomas
 
-**Tres capas de traducción:**
+Web "a la antigua": **todo el texto está escrito directamente en el HTML**, organizado en divs. No hay `data.json` ni renderizado por JavaScript, así que cualquier cambio de texto se ve tal cual en el diff.
 
-1. **UI en `app.js`**: Objeto `translations` con labels de navegación, botones
-2. **Datos en `data.json`**: Base en español + overrides en `data.i18n.en` y `data.i18n.pt`
-3. **HTML estático**: Atributos `data-i18n` para elementos persistentes
-
-**Helpers de traducción:**
-
-- `t(key)`: Traduce strings de UI (ej: `t("nav.about")`)
-- `L(key)`: Obtiene campo localizado con fallback a español
-- `localizedEntry(arrayName, index)`: Obtiene entrada de array traducida
+- Un archivo por idioma: `index.html` (ES), `en.html`, `pt.html`. Al cambiar un texto, cámbialo en los tres.
+- Dentro de cada archivo, cada página es un `<div class="page" id="page-xxx">` con un comentario grande delante:
+  - `page-about` → Carta de presentación (`#about`)
+  - `page-experience` → Experiencia (`#experience`)
+  - `page-aboutme` → Sobre mí (`#aboutme`)
+  - `page-drone` → Dron (`#drone`, y `#drone-architecture`, `#drone-status`... bajan a esa tarjeta)
+- Las banderas son enlaces a `index.html` / `en.html` / `pt.html` y conservan el `#hash` actual.
 
 ### Routing
 
-**Hash-based SPA:** `#about`, `#experience`, `#education`, `#skills`, `#contact`
-
-Cada ruta renderiza:
-
-```javascript
-renderHeader()  // Avatar + nombre/título
-+ sección específica
-+ patchSectionWithCV()  // Botón de descarga de CV
-```
-
-### Detección de idioma
-
-Orden de precedencia:
-
-1. `window.INIT_LANG` (establecido en entry points `/es/`, `/en/`, `/pt/`)
-2. Segmento de ruta URL
-3. localStorage `lang`
-4. Idioma del navegador
-5. Default: `"es"`
+`app.js` muestra solo el `div.page` que corresponde al `#hash` (por defecto `#about`) y oculta el resto. Sin JavaScript se ven todas las páginas seguidas.
 
 ## 🚀 Desarrollo
 
@@ -145,7 +126,7 @@ npm install -g netlify-cli
 netlify dev
 ```
 
-Accede a: `http://localhost:8000/es/` (o el puerto que uses)
+Accede a: `http://localhost:8000/` (o el puerto que uses)
 
 **Configuración de variables de entorno:**
 
@@ -158,45 +139,22 @@ El formulario de contacto requiere una access key de [Web3Forms](https://web3for
 
 Para desarrollo local: crea un archivo `.env` basado en `.env.example`
 
-Accede a: `http://localhost:8000/es/`
-
-### Estructura de datos
-
-**`data.json`** contiene los datos base en español y overrides por idioma:
-
-```json
-{
-  "name": "Miguel Quesada Martínez",
-  "title": "Ingeniero de Software...",
-  "experience": [...],
-  "i18n": {
-    "en": {
-      "title": "Software Engineer...",
-      "experience": [...]
-    },
-    "pt": { ... }
-  }
-}
-```
+Accede a: `http://localhost:8000/`
 
 ### Añadir contenido nuevo
 
-1. **Experiencia/Educación**: Añadir a array base en `data.json`, luego agregar traducciones en `data.i18n.en` y `data.i18n.pt`
-2. **Habilidades**: Añadir a `data.skills` y traducir en `data.i18n.en.skills` y `data.i18n.pt.skills`
-3. **Labels de UI**: Añadir a objeto `translations` en `app.js` con los tres idiomas
+Edita directamente el HTML de los tres idiomas (`index.html`, `en.html`, `pt.html`):
+
+1. **Experiencia**: copia un `<li>` de la página `page-experience` (cada empresa lleva un comentario con su nombre y periodo)
+2. **Educación / Habilidades / Idiomas**: en `page-aboutme`
+3. **Dron**: en `page-drone`, cada tarjeta es un `<section class="card" id="drone-...">`
+4. **Nueva página**: añade un `<div class="page" id="page-nombre">` y un enlace `<a href="#nombre">` en el `<nav>`
+
+Escapa `&`, `<` y `>` en el texto (`&amp;`, `&lt;`, `&gt;`).
 
 ### Cache busting
 
-Al actualizar archivos estáticos, incrementa el parámetro de versión:
-
-- CSS: `styles.css?version=1.0` en HTML
-- JSON: `data.json?version=1.6` en fetch de `app.js`
-
-### Seguridad
-
-⚠️ **Siempre usar `escapeHtml()`** para texto de usuario y prevenir XSS
-
-✅ **Usar `renderInlineBold()`** para texto con formato `**negrita**` (escapa automáticamente)
+Al actualizar `styles.css` o `app.js`, incrementa su `?version=` en los tres HTML.
 
 ## 🚀 Deployment
 
@@ -477,16 +435,15 @@ aws cloudfront create-invalidation \
 
 ### Añadir nueva sección
 
-1. Añadir caso en `renderRoute()` en `app.js`
-2. Crear función `renderNuevaSeccion()`
-3. Añadir traducciones en objeto `translations`
-4. Añadir link en nav de `index.html` y entry points
+1. Añadir `<div class="page" id="page-nombre">` en `index.html`, `en.html` y `pt.html`
+2. Añadir `<a href="#nombre">` en el `<nav>` de los tres archivos
+3. (Opcional) `data-title="..."` en el div para cambiar el título de la pestaña en esa página
 
 ## 📊 SEO
 
-- **Meta tags dinámicos**: Actualizados por `updateMetaForRoute()` en cada cambio de ruta/idioma
-- **JSON-LD**: Schema.org Person injected desde `data.json`
-- **Canonical + hreflang**: Links gestionados dinámicamente para `/es/`, `/en/`, `/pt/`
+- **Meta tags**: Estáticos en el `<head>` de cada idioma
+- **JSON-LD**: Schema.org Person escrito en el `<head>` de cada idioma
+- **Canonical + hreflang**: `/`, `/en.html`, `/pt.html`
 - **Sitemap**: `sitemap.xml` incluye todas las variantes de idioma
 - **Open Graph**: Meta tags para redes sociales
 

@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <!-- Google Analytics se carga solo si el usuario acepta cookies -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MQM Developer</title>
-    <meta
-      name="description"
-      content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia en desarrollo, administración de bases de datos y liderazgo técnico. Basado en Barcelona."
-    />
-    <link rel="canonical" href="https://mqm.digital/es/" />
-    <!-- hreflang: indicate available language versions (language-specific paths) -->
-    <link rel="alternate" hreflang="es" href="https://mqm.digital/es/" />
-    <link rel="alternate" hreflang="en" href="https://mqm.digital/en/" />
-    <link rel="alternate" hreflang="pt" href="https://mqm.digital/pt/" />
+    <title>Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend</title>
+    <meta name="description" content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia en desarrollo, administración de bases de datos y liderazgo técnico. Basado en Barcelona." />
+    <link rel="canonical" href="https://mqm.digital/" />
+    <link rel="alternate" hreflang="es" href="https://mqm.digital/" />
+    <link rel="alternate" hreflang="en" href="https://mqm.digital/en.html" />
+    <link rel="alternate" hreflang="pt" href="https://mqm.digital/pt.html" />
+    <link rel="alternate" hreflang="x-default" href="https://mqm.digital/" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend"
-    />
-    <meta
-      property="og:description"
-      content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia."
-    />
+    <meta property="og:title" content="Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend" />
+    <meta property="og:description" content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia en desarrollo, administración de bases de datos y liderazgo técnico. Basado en Barcelona." />
     <meta property="og:url" content="https://mqm.digital/" />
     <meta property="og:image" content="/favicon.svg" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend"
-    />
-    <meta
-      name="twitter:description"
-      content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia."
-    />
-    <link rel="stylesheet" href="styles.css?version=1.7" />
+    <meta name="twitter:title" content="Miguel Quesada Martínez — Ingeniero de Software / Backend - Frontend" />
+    <meta name="twitter:description" content="Currículum de Miguel Quesada Martínez — Senior FullStack (PHP, Laravel, Vue.js). 25+ años de experiencia en desarrollo, administración de bases de datos y liderazgo técnico. Basado en Barcelona." />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Miguel Quesada Martínez",
+        "jobTitle": "Ingeniero de Software / Backend - Frontend",
+        "url": "https://mqm.digital/",
+        "image": "/favicon.svg",
+        "email": "miguel.quesada.martinez.1975@gmail.com",
+        "telephone": "+34 677 252 313 / +55 64 99319 2296",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Barcelona, España"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="styles.css?version=1.8" />
   </head>
   <body>
     <header class="site-header">
@@ -44,64 +43,800 @@
         <a class="brand" href="https://mqm.digital" aria-label="Home">
           <img src="Logo MQM.png" alt="Logo MQM" class="brand-logo" />
         </a>
-        <button
-          class="menu-toggle"
-          aria-label="Abrir menú"
-          aria-expanded="false"
-          aria-controls="main-nav"
-        >
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+        <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="main-nav">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect y="6" width="28" height="2.5" rx="1.25" fill="currentColor" />
-            <rect
-              y="13"
-              width="28"
-              height="2.5"
-              rx="1.25"
-              fill="currentColor"
-            />
-            <rect
-              y="20"
-              width="28"
-              height="2.5"
-              rx="1.25"
-              fill="currentColor"
-            />
+            <rect y="13" width="28" height="2.5" rx="1.25" fill="currentColor" />
+            <rect y="20" width="28" height="2.5" rx="1.25" fill="currentColor" />
           </svg>
         </button>
         <div class="menu-overlay" tabindex="-1" aria-hidden="true"></div>
         <nav id="main-nav" aria-label="Navegación principal">
-          <a href="#about" data-i18n="nav.about">Acerca</a>
-          <a href="#experience" data-i18n="nav.experience">Experiencia</a>
-          <a href="#aboutme" data-i18n="nav.aboutme">Sobre Mí</a>
+          <a href="#about">Carta de presentación</a>
+          <a href="#experience">Experiencia</a>
+          <a href="#aboutme">Sobre Mí</a>
         </nav>
         <div class="lang-switch" aria-label="Selector de idioma">
-          <button class="lang-btn" data-lang="es" title="Español">
-            <img src="flag-es.svg" alt="ES" />
-          </button>
-          <button class="lang-btn" data-lang="en" title="English">
-            <img src="flag-en.svg" alt="EN" />
-          </button>
-          <button class="lang-btn" data-lang="pt" title="Português">
-            <img src="flag-pt.svg" alt="PT" />
-          </button>
+          <a class="lang-btn active" href="index.html" data-lang="es" title="Español"><img src="flag-es.svg" alt="ES" /></a>
+          <a class="lang-btn" href="en.html" data-lang="en" title="English"><img src="flag-en.svg" alt="EN" /></a>
+          <a class="lang-btn" href="pt.html" data-lang="pt" title="Português"><img src="flag-pt.svg" alt="PT" /></a>
         </div>
       </div>
       <div class="drone-banner">
         <div class="container drone-banner-inner">
-          <a href="#drone" class="drone-banner-link" data-i18n="nav.drone">Dron</a>
+          <a href="#drone" class="drone-banner-link">Dron autónomo con IA</a>
         </div>
       </div>
     </header>
 
     <main id="app" class="container" role="main">
-      <!-- El contenido se renderiza con JavaScript -->
-      <div id="loading" class="loading">Cargando currículum…</div>
+      <!-- Cabecera con foto, nombre y cargo (visible en todas las páginas) -->
+      <section class="card header" aria-labelledby="profile-name">
+        <div style="display:flex;gap:16px;align-items:center">
+          <div class="avatar">
+            <img src="MiguelQuesada.PNG" alt="Miguel Quesada Martínez" />
+          </div>
+          <div>
+            <div id="profile-name" class="h-name">Miguel Quesada Martínez</div>
+            <div class="h-title">Ingeniero de Software / Backend - Frontend</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           PÁGINA: CARTA DE PRESENTACIÓN  (#about)
+           ================================================================ -->
+      <div class="page" id="page-about">
+        <section class="card" id="about-section">
+          <h2 class="section-title">Carta de presentación</h2>
+          <p></p>
+          <p><strong>Soy un desarrollador FullStack sénior con más de 25 años de experiencia, apasionado por la tecnología y por trabajar con las personas.</strong></p>
+          <p>Mi trayectoria incluye también la dirección técnica y el liderazgo de proyectos en España y Brasil, lo que me ha dado una visión amplia, madura y adaptable del mundo del software.</p>
+          <p><strong>Destaco por mi forma de trabajar</strong>: resuelvo problemas complejos con calma, especialmente en situaciones críticas, y mantengo siempre un enfoque en la arquitectura limpia, la eficiencia del código y el rendimiento. Me integro con facilidad en los equipos, colaboro, escucho, ayudo y mantengo una actitud positiva incluso en los momentos difíciles.</p>
+          <p>Además de mis habilidades técnicas, aporto una dimensión humana que valoro tanto como el código: responsabilidad, empatía, buena comunicación y capacidad para generar confianza y buen ambiente. Hablo español, catalán, inglés y portugués con fluidez, lo que me permite colaborar de manera natural en entornos multiculturales.</p>
+          <p><strong>En resumen: soy un profesional sénior con valores, trato humano y un enfoque colaborativo, alguien con experiencia real y con quien resulta fácil y agradable trabajar.</strong></p>
+          <div class="social-links">
+            <a class="social" href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M12 0.5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.77 8.205 11.36.6.11.82-.26.82-.58 0-.29-.01-1.04-.016-2.04-3.338.73-4.042-1.61-4.042-1.61-.546-1.39-1.333-1.76-1.333-1.76-1.09-.75.083-.74.083-.74 1.205.085 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.487.99.108-.78.418-1.3.76-1.6-2.665-.3-5.466-1.33-5.466-5.92 0-1.31.47-2.38 1.235-3.22-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.5 11.5 0 0 1 3.003-.404c1.02.005 2.045.138 3.003.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.12 3.176.77.84 1.234 1.91 1.234 3.22 0 4.6-2.804 5.615-5.476 5.91.43.37.823 1.1.823 2.22 0 1.6-.015 2.88-.015 3.27 0 .32.216.694.825.576C20.565 22.27 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+              <span class="social-label">GitHub</span>
+            </a>
+            <a class="social" href="https://www.linkedin.com/in/miguelquesadamartinez" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zM8.5 8h3.84v2.2h.05c.54-1.02 1.87-2.1 3.85-2.1 4.12 0 4.88 2.71 4.88 6.24V24h-4v-7.44c0-1.78-.03-4.07-2.48-4.07-2.48 0-2.86 1.94-2.86 3.95V24h-4V8z"/></svg>
+              <span class="social-label">LinkedIn</span>
+            </a>
+          </div>
+          <p class="meta about-contact">Ubicación: Barcelona, España <span class="sep">·</span> <a class="btn" href="mailto:miguel.quesada.martinez.1975@gmail.com">Contactar</a></p>
+          <h3 class="section-title" style="margin-top:12px;font-size:1rem">Idiomas</h3>
+          <div class="languages">
+            <div class="language"><div class="name">Español</div><div class="level">Nativo</div></div>
+            <div class="language"><div class="name">Catalán</div><div class="level">Nativo</div></div>
+            <div class="language"><div class="name">Inglés</div><div class="level">Fluido</div></div>
+            <div class="language"><div class="name">Portugués</div><div class="level">Fluido</div></div>
+          </div>
+          <a class="cv-download-btn" href="cvs/Curriculum Miguel Quesada.pdf" download>Descargar CV (PDF)</a>
+        </section>
+      </div>
+
+      <!-- ================================================================
+           PÁGINA: EXPERIENCIA  (#experience)
+           ================================================================ -->
+      <div class="page" id="page-experience">
+        <section class="card" aria-labelledby="exp-title">
+          <h2 id="exp-title" class="section-title">Experiencia</h2>
+          <ul class="list">
+            <!-- Biogyne Spain (02/2023 - 10/2025) -->
+            <li>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div><strong>Senior Fullstack Developer</strong> — Biogyne Spain</div>
+                <div class="meta">02/2023 - 10/2025</div>
+              </div>
+              <div class="meta">Desarrollo integral de sistemas web, entre ellos un e-commerce para teleoperadoras con gestión y automatización de procesos internos para productos, condiciones comerciales y clientes.</div>
+              <div class="meta">
+                • E-commerce para teleoperadoras<br/>
+                • Gestión y automatización de procesos internos
+              </div>
+              <div class="exp-tech">
+                <span class="chip">PHP</span>
+                <span class="chip">Laravel</span>
+                <span class="chip">Vue.js</span>
+                <span class="chip">Bootstrap</span>
+                <span class="chip">Node.js</span>
+              </div>
+              <div class="exp-meta">Bases de datos: SQL Server, MariaDB</div>
+              <div class="exp-meta">Control de versiones: GIT</div>
+            </li>
+            <!-- Denusa (Destilaria Nova União S/A - Brasil) (07/2013 - 12/2021) -->
+            <li>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div><strong>CTO y Senior Developer</strong> — Denusa (Destilaria Nova União S/A - Brasil)</div>
+                <div class="meta">07/2013 - 12/2021</div>
+              </div>
+              <div class="meta">Gestión del departamento de TI y liderazgo técnico de proyectos corporativos. Desarrollo de aplicaciones web y administración de infraestructura Linux/Windows. Mantenimiento del ERP TOTVS.</div>
+              <div class="meta">
+                • Gestión y liderazgo del departamento de TI<br/>
+                • Mantenimiento del ERP TOTVS
+              </div>
+              <div class="exp-tech">
+                <span class="chip">PHP</span>
+                <span class="chip">C#</span>
+                <span class="chip">Laravel</span>
+                <span class="chip">Zend Framework</span>
+                <span class="chip">Bootstrap</span>
+                <span class="chip">Vue.js</span>
+              </div>
+              <div class="exp-meta">Bases de datos: MySQL, SQL Server</div>
+              <div class="exp-meta">Control de versiones: GIT</div>
+            </li>
+            <!-- Segundamano.es (01/2009 - 04/2013) -->
+            <li>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div><strong>Senior Developer</strong> — Segundamano.es</div>
+                <div class="meta">01/2009 - 04/2013</div>
+              </div>
+              <div class="meta">Responsable del departamento de desarrollo backend/fraude; programación y resolución de bugs.</div>
+              <div class="meta">
+                • Responsable de backend y fraude
+              </div>
+              <div class="exp-tech">
+                <span class="chip">PHP</span>
+                <span class="chip">C</span>
+                <span class="chip">C++</span>
+                <span class="chip">Perl</span>
+                <span class="chip">Bash</span>
+                <span class="chip">JavaScript</span>
+                <span class="chip">C#</span>
+              </div>
+              <div class="exp-meta">Bases de datos: PostgreSQL, Oracle, SQL Server, MySQL</div>
+              <div class="exp-meta">Control de versiones: SVN</div>
+            </li>
+            <!-- Plastificados de Terrassa (07/2006 - 12/2008) -->
+            <li>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div><strong>Responsable de TI</strong> — Plastificados de Terrassa</div>
+                <div class="meta">07/2006 - 12/2008</div>
+              </div>
+              <div class="meta">Dirección del área informática e implementación de soluciones de gestión interna y migración de sistemas.</div>
+              <div class="exp-tech">
+                <span class="chip">PHP</span>
+                <span class="chip">C#</span>
+              </div>
+              <div class="exp-meta">Bases de datos: MySQL, SQL Server, Oracle, Access</div>
+            </li>
+            <!-- NELOSA (03/1993 - 12/2006) -->
+            <li>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+                <div><strong>Empresa Familiar / Desarrollador</strong> — NELOSA</div>
+                <div class="meta">03/1993 - 12/2006</div>
+              </div>
+              <div class="meta">Desarrollo de sistemas de gestión y comercio electrónico; mantenimiento de servidores y bases de datos; creación de un e-commerce desde cero.</div>
+              <div class="exp-tech">
+                <span class="chip">PHP</span>
+                <span class="chip">Visual Basic</span>
+              </div>
+              <div class="exp-meta">Bases de datos: MySQL, Access</div>
+            </li>
+          </ul>
+        </section>
+        <a class="cv-download-btn" href="cvs/Curriculum Miguel Quesada.pdf" download>Descargar CV (PDF)</a>
+      </div>
+
+      <!-- ================================================================
+           PÁGINA: SOBRE MÍ  (#aboutme)
+           ================================================================ -->
+      <div class="page" id="page-aboutme">
+        <section class="card">
+          <h2 class="section-title">Sobre Mí</h2>
+          <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">Educación</h3>
+          <ul class="list">
+            <li><strong>Grado en Ingeniería Informática</strong><div class="meta">Cibernos — 1999 - 2002</div></li>
+          </ul>
+          <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">Habilidades</h3>
+          <div class="chips">
+            <span class="chip">PHP</span>
+            <span class="chip">C#</span>
+            <span class="chip">C</span>
+            <span class="chip">C++</span>
+            <span class="chip">Python</span>
+            <span class="chip">Node.js</span>
+            <span class="chip">Bash</span>
+            <span class="chip">Perl</span>
+            <span class="chip">JavaScript</span>
+            <span class="chip">Laravel</span>
+            <span class="chip">Vue.js</span>
+            <span class="chip">Bootstrap</span>
+            <span class="chip">SQL Server</span>
+            <span class="chip">MySQL</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">Git</span>
+            <span class="chip">SVN</span>
+            <span class="chip">Linux</span>
+            <span class="chip">Windows Server</span>
+            <span class="chip">AWS</span>
+            <span class="chip">CD/CI</span>
+            <span class="chip">Trabajo en equipo</span>
+            <span class="chip">Habilidad para aprender</span>
+            <span class="chip">Puntualidad y responsabilidad</span>
+            <span class="chip">Compromiso</span>
+            <span class="chip">Empatía</span>
+            <span class="chip">Flexibilidad y adaptabilidad</span>
+            <span class="chip">Comunicación</span>
+            <span class="chip">Resolución de problemas</span>
+            <span class="chip">Persona proactiva</span>
+            <span class="chip">Capacidad de trabajo</span>
+            <span class="chip">Motivación</span>
+            <span class="chip">Liderazgo</span>
+            <span class="chip">Creatividad</span>
+            <span class="chip">Habilidades sociales</span>
+            <span class="chip">Capacidad de razonamiento</span>
+            <span class="chip">Atención al detalle</span>
+          </div>
+          <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">Idiomas</h3>
+          <div class="languages">
+            <div class="language"><div class="name">Español</div><div class="level">Nativo</div></div>
+            <div class="language"><div class="name">Catalán</div><div class="level">Nativo</div></div>
+            <div class="language"><div class="name">Inglés</div><div class="level">Fluido</div></div>
+            <div class="language"><div class="name">Portugués</div><div class="level">Fluido</div></div>
+          </div>
+          <h3 class="section-title" style="margin-top:24px;font-size:1.1rem">Contacto</h3>
+          <p class="meta">Email: <a href="mailto:miguel.quesada.martinez.1975@gmail.com">miguel.quesada.martinez.1975@gmail.com</a></p>
+          <p class="meta">Teléfono: +34 677 252 313 / +55 64 99319 2296</p>
+          <p class="meta">Ubicación: Barcelona, España</p>
+          <p class="meta">GitHub: <a href="https://github.com/miguelquesadamartinez" target="_blank" rel="noopener noreferrer">miguelquesadamartinez</a></p>
+        </section>
+        <a class="cv-download-btn" href="cvs/Curriculum Miguel Quesada.pdf" download>Descargar CV (PDF)</a>
+      </div>
+
+      <!-- ================================================================
+           PÁGINA: DRON  (#drone y #drone-*)
+           ================================================================ -->
+      <div class="page" id="page-drone" data-title="Dron autónomo con IA — Miguel Quesada Martínez">
+        <section class="card">
+          <div class="drone-eyebrow">Proyecto personal</div>
+          <h2 class="section-title" style="font-size:1.3rem">Dron autónomo con detección de personas por IA</h2>
+          <p>Un quadcopter construido desde cero: controlador de vuelo Pixhawk con ArduCopter, una Raspberry Pi 4 como cerebro embarcado, una cámara de IA (Sony IMX500) que detecta personas en su propio chip, vídeo en vivo y control de vuelo completo desde una app móvil propia — todo sobre WiFi local, sin mando de radio tradicional ni servicios en la nube.</p>
+          <div class="chips" style="margin:10px 0 4px">
+            <span class="chip">Pixhawk + ArduCopter 4.6.3</span>
+            <span class="chip">Raspberry Pi 4</span>
+            <span class="chip">Cámara IA Sony IMX500</span>
+            <span class="chip">FastAPI + MAVLink</span>
+            <span class="chip">App propia en Expo / React Native</span>
+            <span class="chip">Frame propio impreso en 3D</span>
+          </div>
+          <p>Es un proyecto personal para aprender de punta a punta: electrónica y montaje del hardware, firmware de vuelo (ArduCopter), inteligencia artificial embebida y desarrollo de software — un servidor en Python/FastAPI y una app móvil en React Native.</p>
+          <p>El objetivo final es un quadcopter controlado por completo desde el teléfono: vídeo en vivo con detección de personas en tiempo real, telemetría y controles de vuelo (despegar, aterrizar, moverse, volver a casa, parada de emergencia), todo hablando con el Pixhawk vía MAVLink — sin mando de radio tradicional de por medio, aunque se sumará uno como respaldo.</p>
+          <p>Esta página resume la arquitectura, el estado real de cada pieza y algunos de los problemas más difíciles de depurar que me he encontrado por el camino.</p>
+          <div class="drone-jumpnav" role="tablist">
+            <a href="#drone-architecture" role="tab">Arquitectura</a>
+            <a href="#drone-how" role="tab">Cómo funciona</a>
+            <a href="#drone-rpi" role="tab">Configuración de la RPi</a>
+            <a href="#drone-challenges" role="tab">Retos técnicos</a>
+            <a href="#drone-status" role="tab">Estado</a>
+            <a href="#drone-stl" role="tab">Piezas 3D</a>
+            <a href="#drone-questions" role="tab">Dudas abiertas</a>
+          </div>
+        </section>
+
+        <!-- ===== Arquitectura ===== -->
+        <section class="card" id="drone-architecture">
+          <h3 class="section-title" style="font-size:1.05rem">Arquitectura</h3>
+          <h4 class="drone-subhead">Hardware</h4>
+          <ul class="list">
+            <li>Controlador de vuelo Pixhawk 2.4.8 con firmware ArduCopter 4.6.3</li>
+            <li>Raspberry Pi 4 Model B como compañero de a bordo (companion computer)</li>
+            <li>Cámara Raspberry Pi AI (Sony IMX500) — inferencia de IA en el propio sensor</li>
+            <li>4× motores brushless A2212 1000KV + 4× ESC 30A (ICQUANZX) + hélices de 10"</li>
+            <li>Batería LiPo 3S 5000mAh (11.1V nominal) — elegida para respetar la especificación del motor/ESC actual, pendiente de comprar</li>
+            <li>PDB Matek PDB-XT60, con BEC integrado de 5V/1.5A — insuficiente por sí solo para alimentar la Raspberry Pi</li>
+            <li>UBEC dedicado 5V/5A (entrada 2S-6S) + condensador de 220-470µF entre 5V y GND, para la Raspberry Pi — pendientes de comprar y montar</li>
+            <li>Módulo de potencia 3DR, para que el Pixhawk mida voltaje y corriente de la batería</li>
+            <li>GPS u-blox NEO-M9N — pendiente de conectar a la Pixhawk</li>
+            <li>Pantalla OLED SSD1306 (previsiblemente por I2C) — pendiente de conectar</li>
+            <li>Buzzer y botón/interruptor de seguridad</li>
+            <li>Mando RadioMaster Zorro negro (ExpressLRS, EdgeTX) + receptor ELRS a juego (RadioMaster RP1/RP2 o Happymodel EP1/EP2) — pendientes de comprar</li>
+            <li>Frame propio impreso en 3D a medida: patas, alas/brazos, tapa, base y separadores (piezas STL más abajo)</li>
+            <li>Soporte de cámara impreso en 3D, diseñado para fijarla y descartar la vibración como causa de los recuadros de detección desencajados</li>
+            <li>Cable de telemetría Pixhawk↔Raspberry Pi por el conector JST-GH del Pixhawk — rehecho a mano tras localizar un fallo del hilo de GND</li>
+            <li>Extensiones de cable soldadas entre los ESC y los motores, porque los cables de fábrica no llegan</li>
+          </ul>
+          <h4 class="drone-subhead" style="margin-top:16px">Software</h4>
+          <ul class="list">
+            <li>comando_server.py — servidor FastAPI en la Raspberry Pi que habla con el Pixhawk por MAVLink (dronekit/pymavlink): despegar, aterrizar, movimiento, RTL, parada de emergencia, telemetría y logs en vivo</li>
+            <li>deteccion_personas_ai.py — captura vídeo con Picamera2 y corre un modelo SSD MobileNetV2 directamente en el chip IMX500 para detectar personas en tiempo real, dibuja los recuadros y publica el stream por RTSP/MediaMTX</li>
+            <li>dronecam-app — app móvil propia (Expo / React Native) con vídeo en vivo, telemetría, consola de logs y controles de vuelo, hablando por WiFi local con la Raspberry Pi</li>
+          </ul>
+          <h4 class="drone-subhead">Código en GitHub</h4>
+          <ul class="list drone-repos">
+            <li><a href="https://github.com/miguelquesadamartinez/drone-env" target="_blank" rel="noopener noreferrer">drone-env — servidor de comandos y detección de personas (Raspberry Pi)</a></li>
+            <li><a href="https://github.com/miguelquesadamartinez/dronecam-app" target="_blank" rel="noopener noreferrer">dronecam-app — app móvil (Expo / React Native)</a></li>
+          </ul>
+        </section>
+
+        <!-- ===== Cómo funciona ===== -->
+        <section class="card" id="drone-how">
+          <h3 class="section-title" style="font-size:1.05rem">Cómo funciona, de principio a fin</h3>
+          <p class="meta" style="margin-bottom:10px">Desde que abro la app hasta que el dron se mueve, la información pasa por varias piezas que hablan entre sí en tiempo real:</p>
+          <ol class="drone-steps">
+            <li>La app móvil (dronecam-app) se conecta a la Raspberry Pi por WiFi local — sin pasar por internet ni por ningún servidor externo.</li>
+            <li>La cámara IMX500 captura vídeo continuamente; cada fotograma se analiza en el propio chip de la cámara, que ya lleva la inferencia de IA integrada, así que la Raspberry Pi no tiene que cargar con ese trabajo.</li>
+            <li>deteccion_personas_ai.py recoge esas detecciones, dibuja un recuadro verde sobre cada persona y envía el vídeo ya anotado a MediaMTX, que lo sirve como HLS hacia la app — todo con unos ~6 segundos de retraso.</li>
+            <li>En paralelo, comando_server.py expone una API (FastAPI) con los controles de vuelo: despegar, aterrizar, moverse, volver a casa o parar de emergencia.</li>
+            <li>Ese servidor traduce cada orden a MAVLink y se la manda al Pixhawk, que es quien de verdad controla los motores — la Raspberry Pi nunca vuela el dron directamente, solo le dice qué hacer.</li>
+            <li>Un watchdog corta el vuelo y fuerza el regreso a casa si la app deja de responder más de 5 segundos, como red de seguridad.</li>
+          </ol>
+        </section>
+
+        <!-- ===== Raspberry Pi ===== -->
+        <section class="card" id="drone-rpi">
+          <h3 class="section-title" style="font-size:1.05rem">Configuración de la Raspberry Pi</h3>
+          <p class="meta" style="margin-bottom:12px">La Raspberry Pi es el cerebro de a bordo: habla con el Pixhawk por un lado y con la app móvil por el otro. Así está configurada ahora mismo:</p>
+          <h4 class="drone-subhead">Sistema y arranque</h4>
+          <ul class="list">
+            <li>Raspberry Pi OS (64 bits) sobre una Raspberry Pi 4 Model B</li>
+            <li>El zócalo de la tarjeta microSD tiene una avería física: hace contacto con la carcasa puesta (que presiona la tarjeta) pero lo pierde sin ella, que es como iría montada en el dron</li>
+            <li>Solución en marcha: arrancar desde un USB en vez de desde la microSD, para evitar el zócalo roto del todo</li>
+          </ul>
+          <pre class="code-block"><code>sudo apt update &amp;&amp; sudo apt upgrade -y
+
+# permisos para acceder a la cámara y al puerto serie sin sudo
+sudo usermod -a -G video,dialout $USER
+
+sudo reboot</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Telemetría con el Pixhawk</h4>
+          <ul class="list">
+            <li>Conectada al puerto TELEM2 del Pixhawk mediante el UART de hardware de la Raspberry Pi</li>
+            <li>921600 baudios en ambos extremos (antes estaban mal puestos a 115200)</li>
+            <li>UART habilitado (enable_uart=1) y el Bluetooth integrado desactivado (dtoverlay=disable-bt) para liberar el UART de hardware completo, sin compartirlo con la consola serie</li>
+            <li>Conexión verificada con un heartbeat MAVLink real y estable, leído con pymavlink</li>
+            <li>La Raspberry Pi estuvo primero en TELEM1; se movió a TELEM2 para dejar TELEM1 libre y preparado para el futuro receptor de radio ELRS</li>
+          </ul>
+          <pre class="code-block"><code># /boot/config.txt — al final del archivo
+dtoverlay=disable-bt
+enable_uart=1
+
+# /boot/cmdline.txt — quitar "console=serial0,115200"
+
+sudo systemctl disable bluetooth
+sudo reboot
+
+# tras reiniciar, comprobar que el puerto existe:
+ls /dev/serial0</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Servidor de comandos (comando_server.py)</h4>
+          <ul class="list">
+            <li>Desplegado en ~/Documents/_Codes/drone-env, sincronizado por git</li>
+            <li>FastAPI + dronekit/pymavlink, escuchando en el puerto 8000</li>
+            <li>Configuración en un archivo .env (copiado de .env.example) — sin él, el servidor se conectaba por defecto a un simulador (SITL) en vez de al Pixhawk real</li>
+            <li>Watchdog interno: si no recibe un /ping de la app en 5 segundos, fuerza la vuelta a casa como red de seguridad</li>
+            <li>Expone estos endpoints HTTP a la app: /ping, /despegar, /aterrizar, /rtl, /mover, /parar_movimiento, /parada_emergencia, /motor_test/iniciar, /motor_test/detener, /ejecutar_script, /detener_script, /logs y /telemetria</li>
+            <li>Pendiente: montarlo también como servicio systemd para que arranque solo tras un reinicio</li>
+          </ul>
+          <pre class="code-block"><code>cd ~/Documents/_Codes/drone-env
+pip install fastapi uvicorn dronekit pymavlink python-dotenv
+
+# .env (copiado de .env.example):
+DRONE_CONN=/dev/serial0:921600
+DRONE_WATCHDOG_TIMEOUT=5
+
+python comando_server.py   # arranca en 0.0.0.0:8000
+
+# comprobación rápida desde otra máquina de la misma red:
+curl -X POST http://&lt;ip-rpi&gt;:8000/ping</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Cámara y detección de personas</h4>
+          <ul class="list">
+            <li>deteccion_personas_ai.py corre la inferencia de IA directamente en el chip Sony IMX500 de la cámara, sin cargar la CPU de la Raspberry Pi</li>
+            <li>Publica el vídeo por ffmpeg → RTSP (rtsp://localhost:8554/drone) → MediaMTX → HLS hacia la app</li>
+            <li>Resolución 640×480 a 10 fps, con un buffer de solo 2 fotogramas en la cámara — antes eran 12, y esa cola es la que causaba el minuto de retraso (se iba llenando de fotogramas cada vez más viejos)</li>
+            <li>Umbral de confianza de la detección: 0.6 (solo se dibuja la persona si el modelo supera esa confianza)</li>
+            <li>Intervalo de keyframe de ffmpeg fijado a 1 segundo (-g, -keyint_min y -sc_threshold en 0) para mantener la latencia en vivo baja</li>
+          </ul>
+          <pre class="code-block"><code>sudo apt install -y rpicam-apps python3-picamera2 imx500-all
+rpicam-hello --timeout 0        # comprobar que la cámara responde
+
+# /boot/firmware/config.txt
+camera_auto_detect=1
+
+# modelo IA que usa deteccion_personas_ai.py:
+# /usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk
+
+# comando ffmpeg real que lanza el propio script (fotogramas por stdin -&gt; RTSP):
+ffmpeg -y -hide_banner -loglevel warning -nostats \
+  -use_wallclock_as_timestamps 1 \
+  -f rawvideo -pixel_format bgr24 -video_size 640x480 -framerate 10 \
+  -i - \
+  -c:v libx264 -preset ultrafast -tune zerolatency \
+  -g 10 -keyint_min 10 -sc_threshold 0 \
+  -pix_fmt yuv420p \
+  -f rtsp rtsp://localhost:8554/drone</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Servicios systemd (arrancan solos con la Raspberry Pi)</h4>
+          <ul class="list">
+            <li>mediamtx.service — el servidor MediaMTX que recibe el RTSP y lo sirve como HLS a la app</li>
+            <li>drone-camera.service — corre deteccion_personas_ai.py, que a su vez lanza ffmpeg; depende de mediamtx.service (After / Requires) para no arrancar antes de tiempo</li>
+            <li>Restart=on-failure: si el proceso se cae, systemd lo reinicia solo a los 2 segundos</li>
+          </ul>
+          <pre class="code-block"><code># /etc/systemd/system/drone-camera.service
+[Unit]
+Description=Streaming de camara IA (deteccion de personas) hacia MediaMTX
+After=mediamtx.service
+Requires=mediamtx.service
+
+[Service]
+WorkingDirectory=/home/emiki/Documents/_Codes/drone-env
+ExecStart=/home/emiki/venv-ardupilot/bin/python3 /home/emiki/Documents/_Codes/drone-env/deteccion_personas_ai.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now mediamtx.service drone-camera.service
+
+# comprobar que van bien / ver sus logs:
+sudo systemctl status drone-camera.service mediamtx.service
+sudo journalctl -u drone-camera.service -f</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Despliegue y actualización del código</h4>
+          <ul class="list">
+            <li>El código de la Raspberry Pi vive en el mismo repositorio que los dos PCs del usuario: nada de copiar archivos sueltos a mano</li>
+            <li>Cada cambio se sube desde el PC y se actualiza en la Raspberry Pi con un git pull, así no hay riesgo de que una copia se quede desactualizada</li>
+          </ul>
+          <pre class="code-block"><code>cd ~/Documents/_Codes/drone-env
+git pull
+
+# si se tocó comando_server.py, reiniciarlo a mano (aún no es systemd):
+# Ctrl+C en su terminal y volver a lanzar:
+python comando_server.py
+
+# si se tocó deteccion_personas_ai.py, el servicio se reinicia solo:
+sudo systemctl restart drone-camera.service</code></pre>
+          <h4 class="drone-subhead" style="margin-top:16px">Red y acceso desde la app</h4>
+          <ul class="list">
+            <li>Todo por WiFi local — sin pasar por internet ni por ningún servidor externo</li>
+            <li>La IP de la Raspberry Pi cambia según la casa (Barcelona o Segur); la app móvil centraliza esa IP en un único archivo de configuración para no tocar el código cada vez</li>
+          </ul>
+        </section>
+
+        <!-- ===== Problemas y soluciones ===== -->
+        <section class="card" id="drone-challenges">
+          <h3 class="section-title" style="font-size:1.05rem">Retos técnicos que me ha costado resolver</h3>
+          <p class="meta" style="margin-bottom:14px">Tres de los bugs más tercos del proyecto, y cómo llegué al fondo de cada uno:</p>
+          <div class="challenge-list">
+            <div class="challenge">
+              <div class="challenge-title">El retraso de vídeo se disparó a 2-3 minutos</div>
+              <p>Al migrar el streaming para que pasara por el chip de IA (de rpicam-vid a deteccion_personas_ai.py), el retraso del vídeo en la app pasó de unos segundos a ¡2-3 minutos!</p>
+              <p><strong>Causa:</strong> Descarté primero el pipeline de vídeo y la propia app — reproduciendo el mismo RTSP en VLC tenía el mismo retraso, así que el problema estaba antes. La causa real: ffmpeg no fijaba el intervalo de keyframe, así que usaba uno por defecto de unos 25 segundos. MediaMTX necesita un keyframe para poder cerrar cada fragmento de vídeo (HLS), así que se veía obligado a esperar minutos antes de poder servir nada «en vivo».</p>
+              <p><strong>Solución:</strong> Forzando un keyframe cada segundo (con -g, -keyint_min y -sc_threshold en ffmpeg) el retraso bajó de golpe a unos 6 segundos.</p>
+            </div>
+            <div class="challenge">
+              <div class="challenge-title">El recuadro de detección cubría casi toda la pantalla</div>
+              <p>Tras limpiar la detección para que solo marcara personas, el recuadro verde salía casi siempre estirado, cubriendo prácticamente todo el vídeo en vez de encajar sobre la persona.</p>
+              <p><strong>Causa:</strong> Eran dos bugs encadenados: primero, estaba reescalando las coordenadas a mano sin tener en cuenta que el modelo de IA razona sobre un cuadrado de 320×320 píxeles, no sobre la resolución real de la cámara. Segundo, incluso usando la función oficial de conversión de coordenadas de picamera2, esta espera las coordenadas ya normalizadas entre 0 y 1, y el modelo las estaba devolviendo en píxeles de su propia entrada.</p>
+              <p><strong>Solución:</strong> Apliqué la misma normalización que usa el ejemplo oficial de picamera2/IMX500 antes de convertir las coordenadas, y el recuadro empezó a encajar de verdad sobre la persona. (De propina: un intento de arreglo a medio camino intentó modificar una propiedad de solo lectura de la librería y tumbó el servicio en un bucle de reinicios — se vio enseguida en los logs de systemd y se revirtió al momento.)</p>
+            </div>
+            <div class="challenge">
+              <div class="challenge-title">Sin telemetría entre el Pixhawk y la Raspberry Pi</div>
+              <p>La Raspberry Pi no conseguía establecer un heartbeat MAVLink estable con el Pixhawk por el puerto serie — cero bytes, o bytes corruptos.</p>
+              <p><strong>Causa:</strong> Descarté uno a uno: puertos alternativos, baudios, configuración UART de la Raspberry Pi, orientación de los cables TX/RX, e incluso el propio hardware UART con pruebas de loopback. Al final, la causa era puramente física: el cable de GND se había salido de su cavidad en el conector JST-GH del Pixhawk.</p>
+              <p><strong>Solución:</strong> Un cable nuevo, bien montado, y corregir además unos baudios mal configurados (estaban a 115200 en vez de 921600) resolvieron el bloqueo en una sola tarde.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Estado ===== -->
+        <section class="card" id="drone-status">
+          <h3 class="section-title" style="font-size:1.05rem">Estado del proyecto</h3>
+          <p class="meta" style="margin-bottom:12px">Actualizado el 23 de septiembre de 2026 — es un proyecto vivo que avanza en ratos libres.</p>
+          <div class="status-list">
+            <!-- Telemetría Pixhawk ↔ Raspberry Pi: 100% (ok) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Telemetría Pixhawk ↔ Raspberry Pi</span>
+                <span class="status-pct" style="color:#198754">100%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:100%;background:#198754"></div></div>
+              <div class="status-note">Resuelto: heartbeat MAVLink estable</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Descartadas primero las causas de software: reinicios, configuración UART, orientación de los cables TX/RX y el propio hardware UART (probado con loopback)</li>
+                    <li>Localizada la causa real: el cable de GND se había salido de su cavidad en el conector JST-GH</li>
+                    <li>Cable nuevo montado y probado</li>
+                    <li>Corregidos los baudios, que estaban mal a 115200 en vez de 921600</li>
+                    <li>Heartbeat MAVLink confirmado de forma estable con pymavlink</li>
+                    <li>Movido el puerto de la Raspberry Pi a TELEM2, dejando TELEM1 preparado para el futuro receptor de radio</li>
+                    <li>Confirmado que el servidor de comandos lleva días funcionando sin problemas contra la Pixhawk real</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <p class="status-empty">Nada — cerrado.</p>
+                </div>
+              </div>
+            </div>
+            <!-- App móvil: 100% (ok) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">App móvil</span>
+                <span class="status-pct" style="color:#198754">100%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:100%;background:#198754"></div></div>
+              <div class="status-note">Vídeo, telemetría y controles de vuelo funcionando</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Diagnosticada y resuelta una actualización automática de Expo Go que rompió la compatibilidad con el proyecto</li>
+                    <li>Revisado el código: ya implementa todos los controles (despegar, mover, motor test, telemetría, logs, scripts) contra los endpoints reales</li>
+                    <li>Creado un archivo de configuración central para la IP de la Raspberry Pi, que cambia según la casa</li>
+                    <li>Confirmada la conexión real app↔servidor: vídeo de la cámara visible y botones llegando a la Raspberry Pi</li>
+                    <li>Añadido el control de altitud (subir/bajar) al mando en pantalla</li>
+                    <li>Consola de logs ordenada (más reciente arriba) y limitada a las últimas 10 líneas</li>
+                    <li>Anotada la IP de la Raspberry Pi para cuando esté en Barcelona</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Panel nuevo de prueba manual de motores (botones ±10% por motor y para todos) — pendiente de probar contra la Pixhawk real</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Streaming de vídeo: 90% (ok) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Streaming de vídeo</span>
+                <span class="status-pct" style="color:#198754">90%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:90%;background:#198754"></div></div>
+              <div class="status-note">Vídeo con detección de personas en vivo, ~6s de latencia</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Pipeline completo construido y verificado en producción</li>
+                    <li>Montado como servicios systemd persistentes tras reinicio</li>
+                    <li>Migrado el streaming para incluir la detección de personas en el propio chip IMX500</li>
+                    <li>Diagnosticado y corregido un bug grave de latencia (2-3 minutos) causado por un intervalo de keyframe de ffmpeg sin fijar</li>
+                    <li>Confirmada la bajada de latencia a unos 6 segundos (a veces 3s) tras el arreglo</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Decidir si bajar aún más el keyframe, aceptar los ~6s actuales, o migrar a WebRTC más adelante</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Servidor de comandos: 85% (ok) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Servidor de comandos</span>
+                <span class="status-pct" style="color:#198754">85%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:85%;background:#198754"></div></div>
+              <div class="status-note">Desplegado y conectado a la Pixhawk real</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Desplegado en la Raspberry Pi y conectado de verdad a la Pixhawk real</li>
+                    <li>Implementados los endpoints de despegar, aterrizar, RTL, mover (con control de altitud), parada de emergencia, motor test, telemetría y logs en vivo</li>
+                    <li>Añadido un watchdog que fuerza la vuelta a casa si no recibe señal de la app en 5 segundos</li>
+                    <li>Mejorado el registro: ahora también quedan en el log las órdenes normales de vuelo, no solo los scripts lanzados</li>
+                    <li>Confirmado que los botones de subir/bajar velocidad de la app usan una velocidad vertical fija (0.5 m/s), sin ajuste posible</li>
+                    <li>Aclarado que las pruebas de motores en banco deben hacerse con los endpoints de motor test, no con los controles normales de mover, para evitar problemas de control</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Montarlo como servicio systemd para que persista tras reinicios</li>
+                    <li>Los avisos PreArm actuales (por falta de mando y receptor) se resolverán solos en cuanto esa pieza esté comprada</li>
+                    <li>Prueba manual de motores por pasos (botones ±10%, por motor o para todos) ya programada — pendiente de subir a la Raspberry Pi y probar con hardware real</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Frame: 83% (warn) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Frame</span>
+                <span class="status-pct" style="color:#e0a100">83%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:83%;background:#e0a100"></div></div>
+              <div class="status-note">Piezas impresas y validadas; falta ajustar el soporte del GPS</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Patas de aterrizaje — validadas</li>
+                    <li>Alas / brazos — validados</li>
+                    <li>Tapa superior — validada</li>
+                    <li>Base — validada</li>
+                    <li>Separadores — validados</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Comprobar cómo encajará el soporte del GPS</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Alimentación de la Raspberry Pi: 80% (warn) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Alimentación de la Raspberry Pi</span>
+                <span class="status-pct" style="color:#e0a100">80%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:80%;background:#e0a100"></div></div>
+              <div class="status-note">Arquitectura decidida, falta comprar el UBEC y el condensador</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Identificado que el BEC del PDB no da abasto para la Raspberry Pi</li>
+                    <li>Decidida la arquitectura: UBEC dedicado más condensador</li>
+                    <li>Resuelto el conflicto de voltaje entre batería y motor/ESC, bajando de 4S a 3S para respetar la especificación del ESC actual</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Comprar la batería 3S 5000mAh, el UBEC 5V/5A (2S–6S) y el condensador de 220–470µF</li>
+                    <li>Montar el UBEC y probarlo en banco antes de volar (ver Ensamblaje)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Detección de personas (IA): 80% (warn) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Detección de personas (IA)</span>
+                <span class="status-pct" style="color:#e0a100">80%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:80%;background:#e0a100"></div></div>
+              <div class="status-note">Funciona; afinando la estabilidad del recuadro</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Subido el umbral de confianza para reducir falsos positivos</li>
+                    <li>Quitado el dibujo de recuadros para objetos que no son personas</li>
+                    <li>Corregido el escalado del recuadro con la función oficial de conversión de coordenadas de picamera2</li>
+                    <li>Corregida la normalización de las coordenadas antes de esa conversión</li>
+                    <li>Confirmado que el recuadro ya encaja bien sobre la persona en la mayoría de los casos</li>
+                    <li>Diseñada una pieza de soporte para montar la cámara fija y aislar si lo que queda es vibración o el movimiento de sujetarla a mano</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Imprimir el soporte de cámara</li>
+                    <li>Probar con la cámara fija sobre una mesa, en un espacio más abierto, y confirmar si eso resuelve la inconsistencia que queda</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Receptor y mando de radio: 25% (crit) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Receptor y mando de radio</span>
+                <span class="status-pct" style="color:#dc3545">25%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:25%;background:#dc3545"></div></div>
+              <div class="status-note">Elegido (RadioMaster Zorro + ELRS); pendiente de compra</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Elegido el mando: RadioMaster Zorro negro, con protocolo ExpressLRS (ELRS)</li>
+                    <li>Dejado preparado el puerto de la Pixhawk donde irá conectado el receptor</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Comprar el mando y un receptor ELRS a juego</li>
+                    <li>Actualizar ambos a la misma versión de firmware antes de emparejarlos</li>
+                    <li>Emparejarlos (bind)</li>
+                    <li>Cablear y soldar el receptor a la Pixhawk</li>
+                    <li>Configurar el failsafe del receptor en modo «sin pulsos»</li>
+                    <li>Calibrar la radio y asignar los canales de vuelo</li>
+                    <li>Configurar el failsafe de pérdida de señal en ArduCopter</li>
+                    <li>Comprobar que el aviso de «receptor no encontrado» desaparece y probar a armar sin hélices</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Zócalo microSD de la Raspberry Pi: 25% (crit) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Zócalo microSD de la Raspberry Pi</span>
+                <span class="status-pct" style="color:#dc3545">25%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:25%;background:#dc3545"></div></div>
+              <div class="status-note">Avería de hardware detectada; trabajo en pausa</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <ul class="status-done">
+                    <li>Diagnosticado el síntoma exacto: la tarjeta funciona con la carcasa puesta, pero pierde contacto sin ella</li>
+                  </ul>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Decidir entre: arrancar por USB (evita el zócalo roto del todo), un apaño mecánico con espuma o cinta (rápido pero poco fiable con las vibraciones de vuelo), o cambiar la Raspberry Pi por otra</li>
+                    <li>Trabajo en pausa hasta tomar esa decisión</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- Soldadura, conexión y ensamblaje final: 0% (warn) -->
+            <div class="status-row">
+              <div class="status-top">
+                <span class="status-name">Soldadura, conexión y ensamblaje final</span>
+                <span class="status-pct" style="color:#e0a100">0%</span>
+              </div>
+              <div class="status-track"><div class="status-fill" style="width:0%;background:#e0a100"></div></div>
+              <div class="status-note">Cableado y montaje físico definitivo, por hacer</div>
+              <div class="status-split">
+                <div>
+                  <h5>Hecho</h5>
+                  <p class="status-empty">Nada todavía.</p>
+                </div>
+                <div>
+                  <h5>Pendiente</h5>
+                  <ul class="status-todo">
+                    <li>Soldar el PDB</li>
+                    <li>Hacer extensiones a los cables de los ESC para que lleguen a los motores</li>
+                    <li>Conectar el GPS y la pantalla OLED a la Pixhawk / Raspberry Pi</li>
+                    <li>Fijar los ESCs a la tapa del frame</li>
+                    <li>Montar en la tapa el buzzer, el PDB, la cámara y el OLED</li>
+                    <li>Montar el UBEC y probar en banco (motores al 15%) que la Raspberry Pi no se resetea, antes de volar</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Piezas STL ===== -->
+        <section class="card" id="drone-stl">
+          <h3 class="section-title" style="font-size:1.05rem">Piezas del frame (impresión 3D)</h3>
+          <p>El frame es un diseño propio, dibujado a medida e iterado más de una decena de veces hasta que todos los componentes encajaban bien. Estos son los STL de las piezas actuales, listos para imprimir:</p>
+          <div class="stl-grid">
+            <a class="stl-item" href="stl/ala-v11.stl" download><span class="stl-name">Ala / brazo del frame</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/base-v2.stl" download><span class="stl-name">Base del frame</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/cover-v19.stl" download><span class="stl-name">Tapa superior (aloja buzzer, PDB, cámara y OLED)</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/patas-v5.stl" download><span class="stl-name">Patas de aterrizaje</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/separador-v2.stl" download><span class="stl-name">Separador</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/soporte-v4.stl" download><span class="stl-name">Soporte general</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+            <a class="stl-item" href="stl/rp-ai-camera-case-front.stl" download><span class="stl-name">Carcasa de la cámara IA</span><span class="stl-download" aria-hidden="true">⬇</span></a>
+          </div>
+          <a class="cv-download-btn" href="stl/piezas-drone.zip" download>Descargar todas (.zip)</a>
+        </section>
+
+        <!-- ===== Preguntas abiertas ===== -->
+        <section class="card" id="drone-questions">
+          <h3 class="section-title" style="font-size:1.05rem">Sobre qué sigo decidiendo</h3>
+          <ul class="list">
+            <li>Latencia de streaming: ¿quedarme en los ~6s actuales, apretar más, o migrar a WebRTC más adelante?</li>
+            <li>Dónde ubicar la batería y el módulo de potencia 3DR dentro del frame</li>
+            <li>Marca/modelo exactos de algunos componentes, pendientes de anotar</li>
+          </ul>
+        </section>
+
+        <!-- ===== Cierre ===== -->
+        <section class="card">
+          <h3 class="section-title" style="font-size:1.05rem">Por qué me embarqué en esto</h3>
+          <p>Llevo más de 25 años como desarrollador, pero este proyecto me saca de mi zona de confort de una forma muy sana: aquí un bug no se queda solo en el código, puede estar en una soldadura floja, en un cable mal encajado, o en cómo un chip de IA normaliza sus coordenadas. Me obliga a razonar por capas — hardware, firmware, backend y app — y esa mezcla de electrónica, IA embebida y desarrollo de software es exactamente lo que más disfruto aprendiendo.</p>
+        </section>
+        <a class="cv-download-btn" href="cvs/Curriculum Miguel Quesada.pdf" download>Descargar CV (PDF)</a>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -109,43 +844,16 @@
     </footer>
 
     <!-- Cookie Consent Banner -->
-    <div
-      id="cookie-banner"
-      class="cookie-banner"
-      role="dialog"
-      aria-live="polite"
-      aria-label="Consentimiento de cookies"
-      aria-describedby="cookie-banner-text"
-    >
+    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Consentimiento de cookies" aria-describedby="cookie-banner-text">
       <div class="cookie-content">
-        <p id="cookie-banner-text" data-i18n-cookie="text">
-          Utilizamos cookies para mejorar tu experiencia de navegación y
-          recordar tus preferencias de idioma. Al continuar navegando, aceptas
-          nuestra política de cookies.
-        </p>
+        <p id="cookie-banner-text">Utilizamos cookies para mejorar tu experiencia de navegación y recordar tus preferencias de idioma. Al continuar navegando, aceptas nuestra política de cookies.</p>
         <div class="cookie-actions">
-          <button
-            id="cookie-accept"
-            class="cookie-btn cookie-accept"
-            data-i18n-cookie="accept"
-          >
-            Aceptar
-          </button>
-          <button
-            id="cookie-reject"
-            class="cookie-btn cookie-reject"
-            data-i18n-cookie="reject"
-          >
-            Rechazar
-          </button>
+          <button id="cookie-accept" class="cookie-btn cookie-accept">Aceptar</button>
+          <button id="cookie-reject" class="cookie-btn cookie-reject">Rechazar</button>
         </div>
       </div>
     </div>
 
-    <script>
-      window.INIT_LANG = "es";
-    </script>
-
-    <script src="app.js?version=2.7" defer></script>
+    <script src="app.js?version=3.0" defer></script>
   </body>
 </html>

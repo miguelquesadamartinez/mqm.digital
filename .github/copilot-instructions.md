@@ -1,113 +1,34 @@
 # mqm.digital — AI Coding Agent Instructions
 
 ## Project Overview
-This is a **multilingual personal portfolio/CV website** for Miguel Quesada Martínez. It's a vanilla JavaScript SPA (no build tools) with i18n support for Spanish, English, and Portuguese. The site uses client-side rendering to display resume data from `data.json`.
+Multilingual personal CV/portfolio website for Miguel Quesada Martínez (Spanish, English, Portuguese).
+Old-school static site: **all text is written directly in the HTML**, organized in divs. There is no `data.json` and no client-side rendering, so every text change shows up plainly in the git diff.
 
-## Architecture & Key Files
+## Key Files
+- **`index.html`**: Full site in Spanish (served at `/`)
+- **`en.html`**: Full site in English
+- **`pt.html`**: Full site in Portuguese
+- **`app.js`**: Only mobile menu, show/hide pages by `#hash`, language links keeping the hash, cookie consent + Google Analytics
+- **`styles.css`**: Vanilla CSS (cards, chips, drone section, responsive menu)
 
-### Core Application Pattern
-- **`index.html`**: Root Spanish version with full markup for header, nav, mobile menu, language switcher
-- **`app.js`**: Main SPA logic (~695 lines) handling routing, i18n, data loading, and rendering
-- **`data.json`**: Centralized data store with base Spanish content + i18n overrides for EN/PT
-- **`styles.css`**: Vanilla CSS with responsive design, mobile hamburger menu, chips/cards UI
-- **Language-specific entry points**: `es/index.html`, `en/index.html`, `pt/index.html` set `window.INIT_LANG` to initialize language from path
+## Page Structure (same in the three HTML files)
+- `<section class="card header">`: photo, name and title (always visible)
+- `<div class="page" id="page-about">` → Cover letter (`#about`, legacy `#cover`)
+- `<div class="page" id="page-experience">` → Experience (`#experience`), one `<li>` per job with a comment naming company and period
+- `<div class="page" id="page-aboutme">` → Education, skills, languages, contact (`#aboutme`)
+- `<div class="page" id="page-drone" data-title="...">` → Drone project (`#drone`); `#drone-architecture`, `#drone-how`, `#drone-rpi`, `#drone-challenges`, `#drone-status`, `#drone-stl`, `#drone-questions` show the drone page and scroll to that card
+- `app.js` sets `hidden` on every `.page` except the one matching the hash; `data-title` (optional) changes the tab title
 
-### Data Flow
-1. User accesses `/es/`, `/en/`, or `/pt/` → language-specific HTML loads
-2. `window.INIT_LANG` sets initial language before app.js runs
-3. `app.js` fetches `data.json` (versioned cache-busting: `?version=1.6`)
-4. Hash-based routing (`#about`, `#experience`, etc.) triggers section renders
-5. Client-side rendering combines base data with i18n overrides from `data.json`
+## Conventions
+- **Always update the three language files** when changing text.
+- Escape `&`, `<`, `>` in text (`&amp;`, `&lt;`, `&gt;`). Accents and quotes are written as-is.
+- Keep one text per line so diffs stay readable.
+- Drone status bars: color `#198754` (ok), `#e0a100` (warn), `#dc3545` (crit); the `width:` of `.status-fill` and the `%` label must match.
+- CV download buttons per language: `cvs/Curriculum Miguel Quesada.pdf` (ES), `cvs/Resume Miguel Quesada.pdf` (EN), `cvs/CV Miguel Quesada.pdf` (PT).
 
-## Critical Conventions
-
-### Internationalization (i18n)
-- **Three-layer i18n system**:
-  1. UI translations: `translations` object in `app.js` (nav, buttons, labels)
-  2. Data translations: `data.i18n[lang]` overrides in `data.json` (content)
-  3. HTML attributes: `data-i18n` attributes for static elements
-- **Helper functions**:
-  - `t(key)`: Translate UI strings (e.g., `t("nav.about")`)
-  - `L(key)`: Get localized data field with fallback to base Spanish
-  - `localizedEntry(arrayName, index)`: Get localized array entry (experience, education)
-- **Language detection order**: `window.INIT_LANG` → URL path segment → localStorage → browser language → default "es"
-- **Always update three places** when changing text:
-  1. Base Spanish in `data.json`
-  2. `data.i18n.en` override
-  3. `data.i18n.pt` override
-
-### Routing & Sections
-- Hash-based SPA routing: `#about`, `#experience`, `#education`, `#skills`, `#contact`
-- `#cover` is aliased to `#about` (legacy route, now unified)
-- Each route renders: `renderHeader()` (avatar + name/title) + section-specific content
-- Use `patchSectionWithCV(html)` to append language-specific CV download button
-
-### HTML Safety
-- **Always use `escapeHtml()`** for user-facing text to prevent XSS
-- **Use `renderInlineBold()`** for text with `**bold**` markdown-style formatting (safely escaped)
-- Never concatenate unescaped strings into HTML
-
-### Mobile Menu Implementation
-- `.menu-toggle` button (hamburger icon) hidden on desktop, visible on mobile
-- `.menu-overlay` provides backdrop for mobile nav drawer
-- `.open` class toggles both nav and overlay
-- Always close menu on link click and overlay click
-
-### SEO & Metadata
-- Dynamic meta tags updated via `updateMetaForRoute()` on route/language changes
-- JSON-LD structured data (Person schema) injected dynamically from `data.json`
-- Canonical and hreflang links update to language-specific paths (`/es/`, `/en/`, `/pt/`)
-- Sitemap at `/sitemap.xml` lists all language variants
-
-## Development Workflows
-
-### Adding New Content
-1. **Experience/Education**: Add to `data.json` base array, then add i18n overrides in `data.i18n.en` and `data.i18n.pt`
-2. **Skills**: Add to `data.skills` array (will render as chips), add translations in `data.i18n.en.skills` and `data.i18n.pt.skills`
-3. **UI Labels**: Add to `translations` object in `app.js` with all three languages
-
-### Testing Languages
-- Access `/es/`, `/en/`, `/pt/` directly to test language-specific entry points
-- Use language switcher buttons (flags in header) to test dynamic switching
-- Check localStorage for persisted `lang` preference
-
-### Versioning Static Assets
-- CSS: `styles.css?version=1.0` in HTML
-- JSON: `data.json?version=1.6` in fetch call
-- Increment version numbers to bust browser cache after changes
-
-## Common Patterns
-
-### Rendering Pattern
-```javascript
-function renderSection() {
-  app.innerHTML = `
-    ${renderHeader()}
-    <section class="card">
-      <h2 class="section-title">${t("section.title")}</h2>
-      ${escapeHtml(L("fieldName"))}
-    </section>
-  `;
-}
-```
-
-### Technologies Display
-Experience entries use `.chip` spans for tech stacks:
-```javascript
-<div class="exp-tech">
-  ${technologies.map(t => `<span class="chip">${escapeHtml(t)}</span>`).join(' ')}
-</div>
-```
-
-### CV Download Buttons
-Language-specific PDF links in `cvs/` directory:
-- Spanish: `cvs/Curriculum Miguel Quesada.pdf`
-- English: `cvs/Resume Miguel Quesada.pdf`
-- Portuguese: `cvs/CV Miguel Quesada.pdf`
+## Cache Busting
+Increment `?version=` of `styles.css` / `app.js` in the three HTML files when those files change.
 
 ## Important Notes
-- **No build system**: Pure HTML/CSS/JS, serve with any static host
-- **Cache busting required**: Increment version params when updating assets
-- **Accessibility**: Use semantic HTML, `aria-label`, `aria-expanded`, proper heading hierarchy
-- **Mobile-first CSS**: Uses flexbox, responsive breakpoints in `styles.css`
-- **Social links**: GitHub and LinkedIn hardcoded in `renderAbout()`
+- **No build system**: Pure HTML/CSS/JS, serve with any static host (deployed to S3 + CloudFront via `.github/workflows/deploy.yml`)
+- **Accessibility**: semantic HTML, `aria-label`, `aria-expanded`, proper heading hierarchy
